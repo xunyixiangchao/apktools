@@ -138,6 +138,27 @@ public class FloatingWindowService extends Service {
                     XDiaLogUtil.showGame(FloatingWindowService.this, XDataUtil.GAME_DICE);
                     break;
                 case 2:
+                    // new Thread(new Runnable() {
+                    //     @Override
+                    //     public void run() {
+                    //         OkHttpClient client = new OkHttpClient().newBuilder()
+                    //                 .build();
+                    //         MediaType mediaType = MediaType.parse("text/plain");
+                    //         RequestBody body = RequestBody.create(mediaType, "");
+                    //         Request request = new Request.Builder()
+                    //                 .url("http://1.119.202.130:18080/xconfig.txt")
+                    //                 .method("GET",null)
+                    //                 .build();
+                    //         try {
+                    //             Response response = client.newCall(request).execute();
+                    //             System.out.println("");
+                    //         } catch (IOException e) {
+                    //             e.printStackTrace();
+                    //         }
+                    //     }
+                    // }).start();
+                    // String remoteConfigUrl = "http://1.119.202.130:18080/xconfig.txt";
+
                     String remoteConfigUrl = "http://67.218.158.220/curl/xconfig.txt";
                     new RemoteConfigReader(FloatingWindowService.this).execute(remoteConfigUrl);
                     // 打开功能3

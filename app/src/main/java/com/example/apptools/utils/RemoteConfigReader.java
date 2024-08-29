@@ -23,21 +23,31 @@ public class RemoteConfigReader extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... urls) {
         StringBuilder result = new StringBuilder();
-        HttpURLConnection urlConnection = null;
+        HttpURLConnection connection = null;
         try {
             URL url = new URL(urls[0]);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            InputStream in = urlConnection.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                result.append(line).append(",");
+            connection = (HttpURLConnection) url.openConnection();
+            // 设置请求方式和超时时间
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+            connection.setRequestProperty("User-Agent", "Apifox/1.0.0 (https://www.apifox.cn)");
+            connection.setRequestProperty("Content-type","text/plain");
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                InputStream in = connection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    result.append(line).append(",");
+                }
             }
         } catch (IOException e) {
-            Log.e(TAG, "Error reading remote config file: " + e.getMessage());
+            Log.e(TAG, "Error reading remote config file: " + e.toString());
         } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
+            if (connection != null) {
+                connection.disconnect();
             }
         }
         return result.toString();
@@ -48,6 +58,6 @@ public class RemoteConfigReader extends AsyncTask<String, Void, String> {
         // 在这里处理读取到的配置文件数据
         Log.d(TAG, "Remote config file content: " + result);
         XDataUtil.setXDataValue(mContext,"result",result);
-        XDataUtil.showToast(mContext,result);
+        XDataUtil.showToast(mContext,"返回结果："+result);
     }
 }
