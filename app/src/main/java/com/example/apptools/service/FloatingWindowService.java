@@ -104,9 +104,7 @@ public class FloatingWindowService extends Service {
                     case MotionEvent.ACTION_UP:
                         if (lastAction == MotionEvent.ACTION_DOWN) {
                             // Handle click event here
-                            Toast.makeText(FloatingWindowService.this, "悬浮窗被点击", Toast.LENGTH_SHORT).show();
-//                            Intent intent = new Intent(FloatingWindowService.this, DialogActivity.class);
-//                            FloatingWindowService.this.startActivity(intent);
+//                            Toast.makeText(FloatingWindowService.this, "悬浮窗被点击", Toast.LENGTH_SHORT).show();
                             showListDialog();
                         }
                         lastAction = event.getAction();
@@ -126,7 +124,7 @@ public class FloatingWindowService extends Service {
 
     private void showListDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(FloatingWindowService.this);
-        final String[] items = {"石头剪刀布", "骰子", "功能3"};
+        final String[] items = {"石头剪刀布", "骰子", "验证"};
         builder.setItems(items, (dialog, which) -> {
             switch (which) {
                 case 0:

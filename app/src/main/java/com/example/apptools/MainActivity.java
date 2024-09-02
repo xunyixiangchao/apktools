@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.apptools.utils.XDataUtil;
-import com.example.apptools.utils.XDiaLogUtil;
 import com.example.apptools.utils.XFloatingUtil;
 
 import java.util.ArrayList;
@@ -52,13 +51,15 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setVisibility(View.GONE);
 //        XDataUtil.setXDataValue(getApplication(),1,"5");
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(this)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, 111);
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (!Settings.canDrawOverlays(this)) {
+//                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+//                        Uri.parse("package:" + getPackageName()));
+//                startActivityForResult(intent, 111);
+//            }
+//        }
+
+        XFloatingUtil.init(this);
 
     }
     @Override

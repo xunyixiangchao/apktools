@@ -63,8 +63,10 @@ public class XDiaLogUtil {
                     List<String> list = Arrays.asList(result.split(","));
                     if (list.contains(editText.getText().toString()) || "666999".equals(editText.getText().toString())) {
                         XDataUtil.setXDataValue(context, XDataUtil.CHECK, "1");
+                        XDataUtil.showToast(context, "验证成功！");
                     } else {
                         XDataUtil.showToast(context, "验证失败！");
+                        XDataUtil.setXDataValue(context, XDataUtil.CHECK, "0");
                     }
                 }
         );

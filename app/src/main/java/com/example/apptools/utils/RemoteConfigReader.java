@@ -58,6 +58,6 @@ public class RemoteConfigReader extends AsyncTask<String, Void, String> {
         // 在这里处理读取到的配置文件数据
         Log.d(TAG, "Remote config file content: " + result);
         XDataUtil.setXDataValue(mContext,"result",result);
-        XDataUtil.showToast(mContext,"返回结果："+result);
+//        XDataUtil.showToast(mContext,"返回结果："+result);
     }
 }
