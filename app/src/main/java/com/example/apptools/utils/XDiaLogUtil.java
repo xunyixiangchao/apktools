@@ -11,14 +11,15 @@ import android.widget.EditText;
 
 import com.example.apptools.service.FloatingWindowService;
 
-import java.util.Arrays;
-import java.util.List;
 
 public class XDiaLogUtil {
 
     public static void showGame(Context context, Integer type) {
-        if (!"1".equals(XDataUtil.getXDataValue(context, XDataUtil.CHECK))) {
+        if ("".equals(XDataUtil.getXDataValue(context, XDataUtil.CHECK))) {
             XDataUtil.showToast(context, "请先完成验证！");
+            return;
+        }
+        if(!XDataUtil.checkData(context,XDataUtil.getXDataValue(context, XDataUtil.CHECK))){
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -59,14 +60,12 @@ public class XDiaLogUtil {
         builder.setView(editText);
         builder.setNegativeButton("取消", null);
         builder.setPositiveButton("确定", (dialog, which) -> {
-                    String result = XDataUtil.getXDataValue(context, "result");
-                    List<String> list = Arrays.asList(result.split(","));
-                    if (list.contains(editText.getText().toString()) || "666999".equals(editText.getText().toString())) {
-                        XDataUtil.setXDataValue(context, XDataUtil.CHECK, "1");
+                    if (XDataUtil.checkData(context, editable.toString())) {
+                        XDataUtil.setXDataValue(context, XDataUtil.CHECK, editable.toString());
                         XDataUtil.showToast(context, "验证成功！");
                     } else {
                         XDataUtil.showToast(context, "验证失败！");
-                        XDataUtil.setXDataValue(context, XDataUtil.CHECK, "0");
+                        XDataUtil.setXDataValue(context, XDataUtil.CHECK, "");
                     }
                 }
         );

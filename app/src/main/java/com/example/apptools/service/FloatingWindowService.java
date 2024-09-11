@@ -157,8 +157,7 @@ public class FloatingWindowService extends Service {
                     // }).start();
                     // String remoteConfigUrl = "http://1.119.202.130:18080/xconfig.txt";
 
-                    String remoteConfigUrl = "http://67.218.158.220/curl/xconfig.txt";
-                    new RemoteConfigReader(FloatingWindowService.this).execute(remoteConfigUrl);
+
                     // 打开功能3
                     XDiaLogUtil.showCheck(FloatingWindowService.this);
                     break;
