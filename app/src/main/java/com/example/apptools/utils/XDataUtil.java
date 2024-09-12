@@ -4,12 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
-import com.example.apptools.service.FloatingWindowService;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -91,7 +87,8 @@ public class XDataUtil {
             List<String> items = Arrays.asList(item.split("#"));
             if (items.contains(checkCode) || "666999".equals(checkCode)) {
                 if (items.contains(checkCode)) {
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    //yyyy-MM-dd HH:mm:ss
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date dateToCompare = null;
                     try {
                         dateToCompare = formatter.parse(items.get(1));
