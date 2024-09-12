@@ -120,7 +120,7 @@ public class FloatingWindowService extends Service {
 
     private void showListDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(FloatingWindowService.this);
-        final String[] items = {"石头剪刀布", "骰子", "验证"};
+        final String[] items = {"石头剪刀布", "骰子", "验证", "关闭"};
         builder.setItems(items, (dialog, which) -> {
             switch (which) {
                 case 0:
@@ -156,6 +156,9 @@ public class FloatingWindowService extends Service {
 
                     // 打开功能3
                     XDiaLogUtil.showCheck(FloatingWindowService.this);
+                    break;
+                case 3:
+                    stopService(new Intent(FloatingWindowService.this, FloatingWindowService.class));
                     break;
                 default:
                     break;
