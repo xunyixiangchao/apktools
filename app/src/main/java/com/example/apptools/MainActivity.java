@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
          */
         LogToFile.write(content);
         LogToFile.write(tag, content);
+        /**
+         * invoke-static {p1, p2}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+         */
+        Log.i(tag,content);
     }
 
     @Override

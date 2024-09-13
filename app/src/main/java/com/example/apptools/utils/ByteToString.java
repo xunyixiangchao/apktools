@@ -1,7 +1,5 @@
 package com.example.apptools.utils;
 
-import java.io.UnsupportedEncodingException;
-
 public class ByteToString {
 
 

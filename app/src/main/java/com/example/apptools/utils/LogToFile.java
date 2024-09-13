@@ -1,7 +1,5 @@
 package com.example.apptools.utils;
 
-import android.content.ContextWrapper;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
