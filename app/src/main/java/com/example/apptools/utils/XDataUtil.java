@@ -24,10 +24,13 @@ public class XDataUtil {
 
     public static Integer CHECK = 3;
 
+    public static Integer RECALL=4;
+
     static {
         typeMap.put(GAME_FINGER, "finger");
         typeMap.put(GAME_DICE, "dice");
         typeMap.put(CHECK, "check");
+        typeMap.put(RECALL, "RECALL");
     }
 
     public static String getXDataValue(Context context, int type) {

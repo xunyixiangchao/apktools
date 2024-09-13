@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XDiaLogUtil;
+import com.example.apptools.utils.XToast;
 
 public class FloatingWindowService extends Service {
 
@@ -120,7 +121,8 @@ public class FloatingWindowService extends Service {
 
     private void showListDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(FloatingWindowService.this);
-        final String[] items = {"石头剪刀布", "骰子", "验证", "关闭"};
+        String recallValue = XDataUtil.getXDataValue(this, XDataUtil.RECALL);
+        final String[] items = {"石头剪刀布", "骰子", String.format("防撤%s", "23".equals(recallValue) ? "已开启" : "未开启"), "验证", "关闭"};
         builder.setItems(items, (dialog, which) -> {
             switch (which) {
                 case 0:
@@ -132,6 +134,14 @@ public class FloatingWindowService extends Service {
                     XDiaLogUtil.showGame(FloatingWindowService.this, XDataUtil.GAME_DICE);
                     break;
                 case 2:
+                    XDataUtil.setXDataValue(this, XDataUtil.RECALL, "23".equals(recallValue) ? "9" : "23");
+                    if ("23".equals(recallValue)) {
+                        XToast.showToast(this,"防撤已关闭");
+                    } else {
+                        XToast.showToast(this,"防撤已开启");
+                    }
+                    break;
+                case 3:
                     // new Thread(new Runnable() {
                     //     @Override
                     //     public void run() {
@@ -157,7 +167,7 @@ public class FloatingWindowService extends Service {
                     // 打开功能3
                     XDiaLogUtil.showCheck(FloatingWindowService.this);
                     break;
-                case 3:
+                case 4:
                     stopService(new Intent(FloatingWindowService.this, FloatingWindowService.class));
                     break;
                 default:
