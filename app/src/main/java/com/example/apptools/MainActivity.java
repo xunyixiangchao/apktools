@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.apptools.utils.LogToFile;
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XFloatingUtil;
 
@@ -30,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence label;
 
         public ListItem(String log, Class<?> activityClass) {
-            label=log;
-            aClass=activityClass;
+            label = log;
+            aClass = activityClass;
         }
     }
 
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<ListItem> result = new ArrayList<>();
 //        result.add(new ListItem("Log",LogActivity.class));
 //        result.add(new ListItem("Toast",ToastActivity.class));
-        result.add(new ListItem("Toast",MainActivity.class));
+        result.add(new ListItem("Toast", MainActivity.class));
         MyAdapter adapter = new MyAdapter(this, result);
         recyclerView.setAdapter(adapter);
         recyclerView.setVisibility(View.GONE);
@@ -62,6 +64,18 @@ public class MainActivity extends AppCompatActivity {
         XFloatingUtil.init(this);
 
     }
+
+    public void tag(String tag, String content) {
+        /**
+         * 1.不带tag
+         * invoke-static {v2}, Lcom/example/apptools/utils/LogToFile;->write(Ljava/lang/String;)V
+         * 2.带tag
+         * invoke-static {v1,v2}, Lcom/example/apptools/utils/LogToFile;->write(Ljava/lang/String;Ljava/lang/String;)V
+         */
+        LogToFile.write(content);
+        LogToFile.write(tag, content);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -81,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         private List<ListItem> mItemList;
         private Activity mContext;
 
-        public MyAdapter(Activity context,List<ListItem> listItemList) {
+        public MyAdapter(Activity context, List<ListItem> listItemList) {
             mItemList = listItemList;
             mContext = context;
         }
@@ -98,12 +112,12 @@ public class MainActivity extends AppCompatActivity {
             ListItem listItem = mItemList.get(position);
 
             ViewGroup.LayoutParams layoutParams = holder.textView.getLayoutParams();
-            layoutParams.height =  mContext.getResources().getDisplayMetrics().widthPixels/4;
+            layoutParams.height = mContext.getResources().getDisplayMetrics().widthPixels / 4;
             holder.textView.setLayoutParams(layoutParams);
             holder.textView.setText(listItem.label);
             holder.textView.setOnClickListener(v -> {
                 int xposedGameValue = XDataUtil.getXposedGameValue(mContext.getApplication());
-                Toast.makeText(mContext, String.valueOf(xposedGameValue),Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, String.valueOf(xposedGameValue), Toast.LENGTH_LONG).show();
 //                Intent intent = new Intent(mContext,listItem.aClass);
 //                if (intent != null) {
 //                    mContext.startActivity(intent);

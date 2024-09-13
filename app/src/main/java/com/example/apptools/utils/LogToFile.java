@@ -12,12 +12,22 @@ import java.util.Date;
 public class LogToFile {
     private static final String LOG_FILE = "Slog-%s.txt";
     private static final String LOG_FILE_TAG = "Slog-%s-%s.txt";
-
+    /**
+     * 1.不带tag
+     * invoke-static {v2}, Lcom/example/apptools/utils/LogToFile;->write(Ljava/lang/String;)V
+     * 2.带tag
+     * invoke-static {v1,v2}, Lcom/example/apptools/utils/LogToFile;->write(Ljava/lang/String;Ljava/lang/String;)V
+     */
     public static void write(String content) {
-        write(content, null);
+        write(null, content);
     }
-
-    public static void write(String content, String tag) {
+    /**
+     * 1.不带tag
+     * invoke-static {v2}, Lcom/example/apptools/utils/LogToFile;->write(Ljava/lang/String;)V
+     * 2.带tag
+     * invoke-static {v1,v2}, Lcom/example/apptools/utils/LogToFile;->write(Ljava/lang/String;Ljava/lang/String;)V
+     */
+    public static void write(String tag, String content) {
         try {
             Date now = new Date(System.currentTimeMillis());
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -25,24 +35,15 @@ public class LogToFile {
             Format format1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             String textData = format1.format(now);
             String fileName = String.format(LOG_FILE, date);
-            if (tag != null) {
-                fileName = String.format(LOG_FILE_TAG, tag, date);
-            }
+//            if (tag != null) {
+//                fileName = String.format(LOG_FILE_TAG, tag, date);
+//            }
             File logFile = new File("/storage/emulated/0/", fileName);
             FileWriter fw = new FileWriter(logFile, true);
-            fw.write(textData + "-->" + content + "\n");
+            fw.write(textData + "-->" + (tag != null ? tag + ": " : ": ") + content + "\n");
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        write("content", "tag");
-
-        int i = XDataUtil.getXposedGameValue(new ContextWrapper(null));
-        XDiaLogUtil.showGame(new ContextWrapper(null),1);
-
-        XDataUtil.showToast(new ContextWrapper(null),"toast");
     }
 }
