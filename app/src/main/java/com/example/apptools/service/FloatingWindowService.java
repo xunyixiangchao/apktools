@@ -134,6 +134,13 @@ public class FloatingWindowService extends Service {
                     XDiaLogUtil.showGame(FloatingWindowService.this, XDataUtil.GAME_DICE);
                     break;
                 case 2:
+                    if ("".equals(XDataUtil.getXDataValue(this, XDataUtil.CHECK))) {
+                        XDataUtil.showToast(this, "请先完成验证！");
+                        return;
+                    }
+                    if(!XDataUtil.checkData(this,XDataUtil.getXDataValue(this, XDataUtil.CHECK))){
+                        return;
+                    }
                     XDataUtil.setXDataValue(this, XDataUtil.RECALL, "23".equals(recallValue) ? "9" : "23");
                     if ("23".equals(recallValue)) {
                         XToast.showToast(this,"防撤已关闭");
