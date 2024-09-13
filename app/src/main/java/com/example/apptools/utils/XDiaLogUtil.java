@@ -15,11 +15,7 @@ import com.example.apptools.service.FloatingWindowService;
 public class XDiaLogUtil {
 
     public static void showGame(Context context, Integer type) {
-        if ("".equals(XDataUtil.getXDataValue(context, XDataUtil.CHECK))) {
-            XDataUtil.showToast(context, "请先完成验证！");
-            return;
-        }
-        if(!XDataUtil.checkData(context,XDataUtil.getXDataValue(context, XDataUtil.CHECK))){
+        if(!XDataUtil.checkData(context,XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)){
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -60,7 +56,7 @@ public class XDiaLogUtil {
         builder.setView(editText);
         builder.setNegativeButton("取消", null);
         builder.setPositiveButton("确定", (dialog, which) -> {
-                    if (XDataUtil.checkData(context, editable.toString())) {
+                    if (XDataUtil.checkData(context, editable.toString(),false)) {
                         XDataUtil.setXDataValue(context, XDataUtil.CHECK, editable.toString());
                         XDataUtil.showToast(context, "验证成功！");
                     } else {

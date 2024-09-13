@@ -24,7 +24,7 @@ public class XDataUtil {
 
     public static Integer CHECK = 3;
 
-    public static Integer RECALL=4;
+    public static Integer RECALL = 4;
 
     static {
         typeMap.put(GAME_FINGER, "finger");
@@ -76,7 +76,12 @@ public class XDataUtil {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
-    public static boolean checkData(Context context, String checkCode) {
+    public static boolean checkData(Context context, String checkCode, boolean isNeedCheck) {
+        if (isNeedCheck && "".equals(XDataUtil.getXDataValue(context, XDataUtil.CHECK))) {
+            XDataUtil.showToast(context, "请先完成验证！");
+            XDataUtil.defaultAll(context);
+            return false;
+        }
         String remoteConfigUrl = "http://67.218.158.220/curl/xconfig.txt";
         new RemoteConfigReader(context).execute(remoteConfigUrl);
         String result = XDataUtil.getXDataValue(context, "result");
@@ -99,13 +104,29 @@ public class XDataUtil {
                         e.printStackTrace();
                     }
                     if (dateToCompare.before(currentDate)) {
-                        showToast(context,"验证已过期");
+                        showToast(context, "验证已过期");
+                        XDataUtil.defaultAll(context);
                         return false;
                     }
                 }
                 return true;
             }
         }
+        XDataUtil.defaultAll(context);
         return false;
+    }
+
+    private static void defaultAll(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sp.edit();
+        for (String value : typeMap.values()) {
+            if ("RECALL".equals(value)) {
+                edit.putString(value, "9");
+                edit.apply();//提交修改
+                continue;
+            }
+            edit.putString(value, "");
+            edit.apply();//提交修改
+        }
     }
 }
