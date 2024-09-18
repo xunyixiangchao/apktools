@@ -47,19 +47,20 @@ public class XDataUtil {
     public static int getXDataIntValue(Context context, int type, Map<String, String> content) {
         SharedPreferences sp = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         String value = sp.getString(typeMap.get(type), "0");
+        StringBuilder stringBuilder = new StringBuilder();
         if (type == RECALL) {
-            XToast.showToast(context, value + "已为您拦截一个撤回消息");
+            if ("23".equals(value)) {
+                XToast.showToast(context, value + "已为您拦截一个撤回消息");
+            }
             if (content != null) {
-                StringBuilder stringBuilder = new StringBuilder();
                 for (Map.Entry<String, String> entry : content.entrySet()) {
                     stringBuilder.append(entry.getKey())
                             .append("=")
                             .append(entry.getValue())
-                            .append(", ");
+                            .append(",");
                 }
-                String mapAsString = stringBuilder.toString();
-                LogToFile.write(typeMap.get(RECALL), mapAsString);
             }
+            LogToFile.write(typeMap.get(RECALL), value + stringBuilder);
         }
         return Integer.parseInt(value);
     }
