@@ -41,8 +41,18 @@ public class XDataUtil {
 
 
     public static int getXDataIntValue(Context context, int type) {
+        return getXDataIntValue(context, type, null);
+    }
+
+    public static int getXDataIntValue(Context context, int type, String content) {
         SharedPreferences sp = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         String value = sp.getString(typeMap.get(type), "0");
+        if (type == RECALL && "23".equals(value)) {
+            XToast.showToast(context, "已为您拦截一个撤回消息");
+            if (content != null) {
+                LogToFile.write(typeMap.get(RECALL), content);
+            }
+        }
         return Integer.parseInt(value);
     }
 
