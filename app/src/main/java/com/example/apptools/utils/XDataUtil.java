@@ -27,9 +27,9 @@ public class XDataUtil {
     public static Integer RECALL = 4;
 
     static {
-        typeMap.put(GAME_FINGER, "finger");
-        typeMap.put(GAME_DICE, "dice");
-        typeMap.put(CHECK, "check");
+        typeMap.put(GAME_FINGER, "FINGER");
+        typeMap.put(GAME_DICE, "DICE");
+        typeMap.put(CHECK, "CHECK");
         typeMap.put(RECALL, "RECALL");
     }
 
@@ -101,9 +101,9 @@ public class XDataUtil {
             XDataUtil.defaultAll(context);
             return false;
         }
-        String remoteConfigUrl = "http://67.218.158.220/curl/xconfig.txt";
-        new RemoteConfigReader(context).execute(remoteConfigUrl);
-        String result = XDataUtil.getXDataValue(context, "result");
+        String checkUrl = "http://67.218.158.220/curl/xconfig.txt";
+        new NetAsyncUtil(context, typeMap.get(CHECK)).execute(checkUrl);
+        String result = XDataUtil.getXDataValue(context, typeMap.get(CHECK));
         // 获取当前日期
         Date currentDate = new Date();
         List<String> list = new ArrayList<>();

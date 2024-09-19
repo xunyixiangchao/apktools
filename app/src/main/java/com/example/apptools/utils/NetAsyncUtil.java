@@ -11,14 +11,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class RemoteConfigReader extends AsyncTask<String, Void, String> {
+public class NetAsyncUtil extends AsyncTask<String, Void, String> {
 
     private Context mContext;
-    public  RemoteConfigReader(Context context){
-        this.mContext=context;
+    private String type;
+
+    public NetAsyncUtil(Context context, String type) {
+        this.mContext = context;
+        this.type = type;
     }
 
-    private static final String TAG = RemoteConfigReader.class.getSimpleName();
+    private static final String TAG = NetAsyncUtil.class.getSimpleName();
 
     @Override
     protected String doInBackground(String... urls) {
@@ -31,8 +34,8 @@ public class RemoteConfigReader extends AsyncTask<String, Void, String> {
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
-            connection.setRequestProperty("User-Agent", "Apifox/1.0.0 (https://www.apifox.cn)");
-            connection.setRequestProperty("Content-type","text/plain");
+            connection.setRequestProperty("User-Agent", "Apifox/1.0.0 (https://www.example.apptools.cn)");
+            connection.setRequestProperty("Content-type", "text/plain");
             int responseCode = connection.getResponseCode();
 
             if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -57,7 +60,6 @@ public class RemoteConfigReader extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
         // 在这里处理读取到的配置文件数据
         Log.d(TAG, "Remote config file content: " + result);
-        XDataUtil.setXDataValue(mContext,"result",result);
-//        XDataUtil.showToast(mContext,"返回结果："+result);
+        XDataUtil.setXDataValue(mContext, type, result);
     }
 }
