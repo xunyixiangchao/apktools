@@ -49,7 +49,7 @@ public class XDataUtil {
         String value = sp.getString(typeMap.get(type), "0");
         StringBuilder stringBuilder = new StringBuilder();
         if (type == RECALL) {
-            if ("23".equals(value)) {
+            if (isRecall(context)) {
                 XToast.showToast(context, value + "已为您拦截一个撤回消息");
             }
             if (content != null) {
@@ -147,5 +147,22 @@ public class XDataUtil {
             edit.putString(value, "");
             edit.apply();//提交修改
         }
+    }
+
+    public static void recall(Context context) {
+        if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
+            return;
+        }
+        XDataUtil.setXDataValue(context, XDataUtil.RECALL, isRecall(context) ? "9" : "23");
+        if (!isRecall(context)) {
+            XToast.showToast(context, "防撤已关闭");
+        } else {
+            XToast.showToast(context, "防撤已开启");
+        }
+    }
+
+    public static boolean isRecall(Context context) {
+        String recallValue = XDataUtil.getXDataValue(context, XDataUtil.RECALL);
+        return "23".equals(recallValue);
     }
 }

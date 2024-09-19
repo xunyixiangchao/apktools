@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XDiaLogUtil;
-import com.example.apptools.utils.XToast;
 
 public class FloatingWindowService extends Service {
 
@@ -101,7 +100,6 @@ public class FloatingWindowService extends Service {
                     case MotionEvent.ACTION_UP:
                         if (lastAction == MotionEvent.ACTION_DOWN) {
                             // Handle click event here
-//                            Toast.makeText(FloatingWindowService.this, "悬浮窗被点击", Toast.LENGTH_SHORT).show();
                             showListDialog();
                         }
                         lastAction = event.getAction();
@@ -121,56 +119,27 @@ public class FloatingWindowService extends Service {
 
     private void showListDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(FloatingWindowService.this);
-        String recallValue = XDataUtil.getXDataValue(this, XDataUtil.RECALL);
-        final String[] items = {"石头剪刀布", "骰子", String.format("防撤%s", "23".equals(recallValue) ? "已开启" : "未开启"), "验证", "关闭"};
+        final String[] items = {"石头剪刀布", "骰子", String.format("防撤%s", XDataUtil.isRecall(this) ? "已开启" : "未开启"), "验证", "关闭"};
         builder.setItems(items, (dialog, which) -> {
             switch (which) {
                 case 0:
-                    // 打开功能1
+                    // 剪刀石头布
                     XDiaLogUtil.showGame(FloatingWindowService.this, XDataUtil.GAME_FINGER);
                     break;
                 case 1:
-                    // 打开功能2
+                    // 骰子
                     XDiaLogUtil.showGame(FloatingWindowService.this, XDataUtil.GAME_DICE);
                     break;
                 case 2:
-                    if(!XDataUtil.checkData(this,XDataUtil.getXDataValue(this, XDataUtil.CHECK),true)){
-                        return;
-                    }
-                    XDataUtil.setXDataValue(this, XDataUtil.RECALL, "23".equals(recallValue) ? "9" : "23");
-                    if ("23".equals(recallValue)) {
-                        XToast.showToast(this,"防撤已关闭");
-                    } else {
-                        XToast.showToast(this,"防撤已开启");
-                    }
+                    // 防撤回
+                    XDataUtil.recall(this);
                     break;
                 case 3:
-                    // new Thread(new Runnable() {
-                    //     @Override
-                    //     public void run() {
-                    //         OkHttpClient client = new OkHttpClient().newBuilder()
-                    //                 .build();
-                    //         MediaType mediaType = MediaType.parse("text/plain");
-                    //         RequestBody body = RequestBody.create(mediaType, "");
-                    //         Request request = new Request.Builder()
-                    //                 .url("http://1.119.202.130:18080/xconfig.txt")
-                    //                 .method("GET",null)
-                    //                 .build();
-                    //         try {
-                    //             Response response = client.newCall(request).execute();
-                    //             System.out.println("");
-                    //         } catch (IOException e) {
-                    //             e.printStackTrace();
-                    //         }
-                    //     }
-                    // }).start();
-                    // String remoteConfigUrl = "http://1.119.202.130:18080/xconfig.txt";
-
-
-                    // 打开功能3
+                    // 验证
                     XDiaLogUtil.showCheck(FloatingWindowService.this);
                     break;
                 case 4:
+                    // 关闭
                     stopService(new Intent(FloatingWindowService.this, FloatingWindowService.class));
                     break;
                 default:
