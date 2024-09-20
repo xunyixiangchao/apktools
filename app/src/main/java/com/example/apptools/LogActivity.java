@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.apptools.utils.XDataUtil;
+import com.example.apptools.utils.XOkHttpUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import cn.soulapp.lib.basic.app.MartianApp;
 
 public class LogActivity extends AppCompatActivity {
 
@@ -20,5 +23,9 @@ public class LogActivity extends AppCompatActivity {
         Map<String, String> map = new HashMap<>();
         map.put("key1","value1");
         XDataUtil.getXDataIntValue(this,4,map);
+
+        XOkHttpUtil.soulInterceptor(MartianApp.b(),null,null);
+
+        XOkHttpUtil.soulInterceptor(null,null);
     }
 }

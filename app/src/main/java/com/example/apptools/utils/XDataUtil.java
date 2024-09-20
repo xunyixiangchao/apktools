@@ -26,11 +26,17 @@ public class XDataUtil {
 
     public static Integer RECALL = 4;
 
+    public static Integer NET_CHECK = 5;
+
+    public static Integer BUBBLE = 6;
+
     static {
         typeMap.put(GAME_FINGER, "FINGER");
         typeMap.put(GAME_DICE, "DICE");
         typeMap.put(CHECK, "CHECK");
         typeMap.put(RECALL, "RECALL");
+        typeMap.put(NET_CHECK, "NET_CHECK");
+        typeMap.put(BUBBLE, "BUBBLE");
     }
 
     public static String getXDataValue(Context context, int type) {
@@ -102,8 +108,8 @@ public class XDataUtil {
             return false;
         }
         String checkUrl = "http://67.218.158.220/curl/xconfig.txt";
-        new NetAsyncUtil(context, typeMap.get(CHECK)).execute(checkUrl);
-        String result = XDataUtil.getXDataValue(context, typeMap.get(CHECK));
+        new NetAsyncUtil(context, typeMap.get(NET_CHECK)).execute(checkUrl);
+        String result = XDataUtil.getXDataValue(context, typeMap.get(NET_CHECK));
         // 获取当前日期
         Date currentDate = new Date();
         List<String> list = new ArrayList<>();
@@ -131,6 +137,7 @@ public class XDataUtil {
                 return true;
             }
         }
+        XDataUtil.showToast(context, "请先完成验证！");
         XDataUtil.defaultAll(context);
         return false;
     }
