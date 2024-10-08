@@ -10,5 +10,5 @@ import okhttp3.Response;
 public interface SoulService {
 
 
-    void interceptor(Context context, Request request, Response response, Map<String, String> queryParams);
+    void interceptor(Request request, Response response, Map<String, String> queryParams);
 }

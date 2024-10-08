@@ -1,6 +1,7 @@
-package com.example.apptools.utils.soul.bean;
+package com.example.apptools.utils.soul.bean.bubble;
 
 public class BubblingListItem{
+	private String topDate;
 	private String mood;
 	private String signature;
 	private int followType;
@@ -162,5 +163,13 @@ public class BubblingListItem{
 
 	public String getSkinUrl(){
 		return skinUrl;
+	}
+
+	public String getTopDate() {
+		return topDate;
+	}
+
+	public void setTopDate(String topDate) {
+		this.topDate = topDate;
 	}
 }

@@ -59,7 +59,7 @@ public class XDiaLogUtil {
         builder.setNegativeButton("取消", null);
         builder.setPositiveButton("确定", (dialog, which) -> {
                     if (XDataUtil.checkData(context, editable.toString(), false)) {
-                        XDataUtil.setXDataValue(context, XDataUtil.CHECK, editable.toString());
+                        XDataUtil.setXDataValue(context, XDataUtil.IS_CHECK, "1");
                         XDataUtil.showToast(context, "验证成功！");
                     } else {
                         XDataUtil.showToast(context, "验证失败！");

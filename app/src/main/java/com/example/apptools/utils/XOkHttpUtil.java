@@ -16,7 +16,6 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.soulapp.lib.basic.app.MartianApp;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -27,11 +26,8 @@ import okio.BufferedSource;
 public class XOkHttpUtil {
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    public static void soulInterceptor(Request request, Response response) {
-        soulInterceptor(null, request, response);
-    }
 
-    public static void soulInterceptor(MartianApp context, Request request, Response response) {
+    public static void soulInterceptor(Request request, Response response) {
         //https://api-user.soulapp.cn/bubbling/list?pageId=ChatList_MailList&pageIndex=1
         try {
             URL url = request.url().url();
@@ -60,7 +56,7 @@ public class XOkHttpUtil {
                     //***********************do something*****************************
                     Response newResponse = new Response.Builder().code(response.code())
                             .request(request).message(response.message()).protocol(response.protocol()).body(newBody).build();
-                    service.interceptor(context, request, newResponse, queryParams);
+                    service.interceptor(request, newResponse, queryParams);
                 }
 
 //                Log.e("XOkHttpUtil-1", GsonUtil.build().toJson(oldResponse.body().string()));

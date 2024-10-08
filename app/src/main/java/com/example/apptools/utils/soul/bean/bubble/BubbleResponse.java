@@ -1,8 +1,8 @@
-package com.example.apptools.utils.soul.bean;
+package com.example.apptools.utils.soul.bean.bubble;
 
 public class BubbleResponse{
 	private int code;
-	private Data data;
+	private BubbleData data;
 	private boolean success;
 	private String message;
 
@@ -14,11 +14,11 @@ public class BubbleResponse{
 		return code;
 	}
 
-	public void setData(Data data){
+	public void setData(BubbleData data){
 		this.data = data;
 	}
 
-	public Data getData(){
+	public BubbleData getData(){
 		return data;
 	}
 

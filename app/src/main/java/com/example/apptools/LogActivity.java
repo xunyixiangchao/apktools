@@ -7,7 +7,9 @@ import android.util.Log;
 
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XOkHttpUtil;
+import cn.soul.android.component.DiceFingerMsg;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,8 +26,14 @@ public class LogActivity extends AppCompatActivity {
         map.put("key1","value1");
         XDataUtil.getXDataIntValue(this,4,map);
 
-        XOkHttpUtil.soulInterceptor(MartianApp.b(),null,null);
-
         XOkHttpUtil.soulInterceptor(null,null);
+
+        int nextInt = new SecureRandom().nextInt(3) + 1;
+        if(XDataUtil.isChecked(MartianApp.b())){
+            nextInt=XDataUtil.getXDataIntValue(MartianApp.b(),1);
+        }
+        DiceFingerMsg diceFingerMsg = new DiceFingerMsg(nextInt);
+
+
     }
 }

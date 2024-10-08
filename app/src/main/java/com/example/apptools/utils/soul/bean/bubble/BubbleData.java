@@ -1,8 +1,8 @@
-package com.example.apptools.utils.soul.bean;
+package com.example.apptools.utils.soul.bean.bubble;
 
 import java.util.List;
 
-public class Data{
+public class BubbleData {
 	private int skinCnt;
 	private boolean pageEnd;
 	private boolean haveBubbling;
