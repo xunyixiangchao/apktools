@@ -6,11 +6,10 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.text.Editable;
 import android.text.Selection;
+import android.text.TextUtils;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.example.apptools.service.FloatingWindowService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,8 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import cn.soul.android.component.SoulRouter;
 
 public class XDataUtil {
 
@@ -43,6 +40,8 @@ public class XDataUtil {
     public static Integer IS_CHECK = 7;
 
     public static Integer BUBBLE_SIZE = 8;
+
+    public static Integer HIDE_AD = 9;
 
     static {
         typeMap.put(GAME_FINGER, "FINGER");
@@ -83,6 +82,9 @@ public class XDataUtil {
                 }
             }
             LogToFile.write(typeMap.get(RECALL), value + stringBuilder);
+        }
+        if (TextUtils.isEmpty(value)) {
+            value = "0";
         }
         return Integer.parseInt(value);
     }
@@ -200,6 +202,28 @@ public class XDataUtil {
     public static boolean isRecall(Context context) {
         String recallValue = XDataUtil.getXDataValue(context, XDataUtil.RECALL);
         return "23".equals(recallValue);
+    }
+
+    public static void hideAd(Context context) {
+        if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
+            return;
+        }
+        XDataUtil.setXDataValue(context, XDataUtil.HIDE_AD, isHideAd(context) ? "0" : "1");
+        if (!isHideAd(context)) {
+            XToast.showToast(context, "广告已关闭");
+        } else {
+            XToast.showToast(context, "广告已开启");
+        }
+    }
+
+    /**
+     * false是关闭广告
+     * @param context
+     * @return
+     */
+    public static boolean isHideAd(Context context) {
+        String recallValue = XDataUtil.getXDataValue(context, XDataUtil.HIDE_AD);
+        return "1".equals(recallValue);
     }
 
     public static void saveUser(Context context) {

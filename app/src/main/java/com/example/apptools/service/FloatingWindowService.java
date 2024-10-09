@@ -32,7 +32,6 @@ import com.example.apptools.utils.GsonUtil;
 import com.example.apptools.utils.LogToFile;
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XDiaLogUtil;
-import com.example.apptools.utils.XOkHttpUtil;
 import com.example.apptools.utils.XThread;
 import com.example.apptools.utils.XToast;
 import com.example.apptools.utils.soul.bean.bubble.BubblingListItem;
@@ -45,7 +44,6 @@ import java.util.List;
 import java.util.Map;
 
 import cn.soul.android.component.SoulRouter;
-import okhttp3.Request;
 
 public class FloatingWindowService extends Service implements EndCall {
 
@@ -73,6 +71,7 @@ public class FloatingWindowService extends Service implements EndCall {
         map.put(6, "BUBBLE");
         map.put(7, "跳转");
         map.put(8, "保存");
+        map.put(9,"广告%s");
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -230,6 +229,10 @@ public class FloatingWindowService extends Service implements EndCall {
                     itemList.add(String.format(value, XDataUtil.isRecall(this) ? "已开启" : "未开启"));
                     continue;
                 }
+                if (value.contains("广告")) {
+                    itemList.add(String.format(value, XDataUtil.isHideAd(this) ? "已开启" : "已关闭"));
+                    continue;
+                }
                 itemList.add(value);
             }
         } else {
@@ -240,6 +243,10 @@ public class FloatingWindowService extends Service implements EndCall {
                     String value = map.get(Integer.valueOf(item));
                     if (value.contains("防撤")) {
                         itemList.add(String.format(value, XDataUtil.isRecall(this) ? "已开启" : "未开启"));
+                        continue;
+                    }
+                    if (value.contains("广告")) {
+                        itemList.add(String.format(value, XDataUtil.isHideAd(this) ? "已开启" : "已关闭"));
                         continue;
                     }
                     itemList.add(value);
@@ -303,7 +310,7 @@ public class FloatingWindowService extends Service implements EndCall {
                                     WindowManager.LayoutParams.TYPE_PHONE,
                             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                             PixelFormat.TRANSLUCENT);
-                    windowManager.addView(recyLayout, params);
+
                     int bubbleSize = XDataUtil.getXDataIntValue(this, XDataUtil.BUBBLE_SIZE);
 //                    if (bubbleSize == 0 || bubbleSize != list.size()) {
                     String data = list.get(list.size() - 1);
@@ -316,6 +323,7 @@ public class FloatingWindowService extends Service implements EndCall {
                     bubblingList.get(0).setTopDate(split[0]);
                     adapter.setData(bubblingList, 0);
                     XDataUtil.setXDataValue(this, XDataUtil.BUBBLE_SIZE, String.valueOf(list.size()));
+                    windowManager.addView(recyLayout, params);
 //                    }
                 } else {
                     XToast.showToast(this, "还没有BUBBLE数据");
@@ -330,6 +338,9 @@ public class FloatingWindowService extends Service implements EndCall {
             default:
                 if (finalItems[which].contains("防撤")) {
                     XDataUtil.recall(this);
+                }
+                if (finalItems[which].contains("广告")) {
+                    XDataUtil.hideAd(this);
                 }
                 break;
         }

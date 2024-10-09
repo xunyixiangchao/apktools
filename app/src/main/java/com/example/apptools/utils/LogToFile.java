@@ -2,6 +2,7 @@ package com.example.apptools.utils;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.example.apptools.utils.soul.SoulUserInfoService;
 import com.example.apptools.utils.soul.bean.user.UserData;
@@ -21,6 +22,7 @@ public class LogToFile {
     private static final String LOG_FILE = "Slog-%s.txt";
     private static final String BUBBLE_FILE_TAG = "Sbubble-%s.txt";
     private static final String USER_FILE_TAG = "SUser-%s.txt";
+    private static final String DEFAULT_PATH = "/storage/emulated/0/apptools";
     private static final String BUBBLE_PATH = "/storage/emulated/0/apptools/bubble";
     private static final String USER_PATH = "/storage/emulated/0/apptools/user";
 
@@ -48,10 +50,14 @@ public class LogToFile {
             Format format1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             String textData = format1.format(now);
             String fileName = String.format(LOG_FILE, date);
-//            if (tag != null) {
-//                fileName = String.format(LOG_FILE_TAG, tag, date);
-//            }
-            File logFile = new File("/storage/emulated/0/", fileName);
+            File logFile = new File(DEFAULT_PATH, fileName);
+            if (!logFile.exists()) {
+                File parentDir = logFile.getParentFile();
+                if (parentDir != null && !parentDir.exists()) {
+                    boolean dirsCreated = parentDir.mkdirs();
+                }
+                logFile.createNewFile();
+            }
             FileWriter fw = new FileWriter(logFile, true);
             fw.write(textData + "-->" + (tag != null ? tag + ": " : ": ") + content + "\n");
             fw.close();
@@ -98,7 +104,7 @@ public class LogToFile {
                 String line;
                 while ((line = br.readLine()) != null) {
                     // 处理每一行
-                    System.out.println(line);
+                    Log.i("LogToFile",line);
                     list.add(line);
                 }
             } catch (IOException e) {
@@ -136,7 +142,7 @@ public class LogToFile {
             XToast.showToast(context, "保存成功");
         } catch (Exception e) {
             e.printStackTrace();
-            XToast.showToast(context, "保存异常"+e.toString());
+            XToast.showToast(context, "保存异常" + e.toString());
         }
     }
 }

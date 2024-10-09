@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XOkHttpUtil;
+
 import cn.soul.android.component.DiceFingerMsg;
 
 import java.security.SecureRandom;
@@ -16,21 +17,28 @@ import java.util.Map;
 import cn.soulapp.lib.basic.app.MartianApp;
 
 public class LogActivity extends AppCompatActivity {
+    private boolean isADShowed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log);
-        Log.e("tag","message");
+
+        if (XDataUtil.isHideAd(MartianApp.b())) {
+            isADShowed = XDataUtil.isHideAd(MartianApp.b());
+        }
+        Log.e("tag", "message");
         Map<String, String> map = new HashMap<>();
-        map.put("key1","value1");
-        XDataUtil.getXDataIntValue(this,4,map);
+        map.put("key1", "value1");
+        XDataUtil.getXDataIntValue(this, 4, map);
 
-        XOkHttpUtil.soulInterceptor(null,null);
+        XOkHttpUtil.soulInterceptor(null, null);
 
-        int nextInt = new SecureRandom().nextInt(3) + 1;
-        if(XDataUtil.isChecked(MartianApp.b())){
-            nextInt=XDataUtil.getXDataIntValue(MartianApp.b(),1);
+        int nextInt;
+        if (XDataUtil.isChecked(MartianApp.b())) {
+            nextInt = XDataUtil.getXDataIntValue(MartianApp.b(), 2);
+        } else {
+            nextInt = new SecureRandom().nextInt(6) + 1;
         }
         DiceFingerMsg diceFingerMsg = new DiceFingerMsg(nextInt);
 
