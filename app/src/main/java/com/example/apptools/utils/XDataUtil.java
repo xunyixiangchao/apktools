@@ -7,9 +7,12 @@ import android.os.Build;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.apptools.service.FloatingWindowService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,6 +46,10 @@ public class XDataUtil {
 
     public static Integer HIDE_AD = 9;
 
+    public static Integer AVATAR = 10;
+
+    public static Integer LOCAL_RECALL=11;
+
     static {
         typeMap.put(GAME_FINGER, "FINGER");
         typeMap.put(GAME_DICE, "DICE");
@@ -52,6 +59,8 @@ public class XDataUtil {
         typeMap.put(BUBBLE, "BUBBLE");
         typeMap.put(IS_CHECK, "IS_CHECK");
         typeMap.put(BUBBLE_SIZE, "BUBBLE_SIZE");
+        typeMap.put(AVATAR, "AVATAR");
+        typeMap.put(LOCAL_RECALL, "LOCAL_RECALL");
     }
 
     public static String getXDataValue(Context context, int type) {
@@ -218,6 +227,7 @@ public class XDataUtil {
 
     /**
      * false是关闭广告
+     *
      * @param context
      * @return
      */
@@ -226,30 +236,22 @@ public class XDataUtil {
         return "1".equals(recallValue);
     }
 
-    public static void saveUser(Context context) {
+
+    public static void localRecall(Context context) {
         if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        EditText editText = new EditText(context);
-
-        Editable editable = editText.getText();
-        if (editable != null) {
-            Selection.setSelection(editable, editable.length());
-        }
-        builder.setTitle("保存文件名");
-        builder.setView(editText);
-        builder.setNegativeButton("取消", null);
-        builder.setPositiveButton("确定",
-                (dialog, which) -> XThread.runOnMain(() ->
-                        LogToFile.writeUser(context, editable.toString()))
-        );
-        AlertDialog dialog = builder.create();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        XDataUtil.setXDataValue(context, XDataUtil.LOCAL_RECALL, isLocalRecall(context) ? "0" : "1");
+        if (!isLocalRecall(context)) {
+            XToast.showToast(context, "本地撤回已关闭");
         } else {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            XToast.showToast(context, "本地撤回已开启");
         }
-        dialog.show();
     }
+
+    public static boolean isLocalRecall(Context context) {
+        String recallValue = XDataUtil.getXDataValue(context, XDataUtil.LOCAL_RECALL);
+        return "1".equals(recallValue);
+    }
+
 }

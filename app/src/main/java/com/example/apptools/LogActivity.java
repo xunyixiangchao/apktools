@@ -1,5 +1,7 @@
 package com.example.apptools;
 
+import static com.example.apptools.utils.XDataUtil.getXDataValue;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -42,6 +44,12 @@ public class LogActivity extends AppCompatActivity {
         }
         DiceFingerMsg diceFingerMsg = new DiceFingerMsg(nextInt);
 
-
+        HashMap hashMap = new HashMap();
+        String avatarName="av";
+        hashMap.put("avatarName", avatarName);
+        if(XDataUtil.isChecked(MartianApp.b())) {
+            String xDataValue = getXDataValue(MartianApp.b(), XDataUtil.AVATAR);
+            hashMap.put("avatarName", xDataValue);
+        }
     }
 }

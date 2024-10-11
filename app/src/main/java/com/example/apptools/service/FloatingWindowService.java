@@ -29,7 +29,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.apptools.utils.GsonUtil;
-import com.example.apptools.utils.LogToFile;
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XDiaLogUtil;
 import com.example.apptools.utils.XThread;
@@ -47,11 +46,11 @@ import cn.soul.android.component.SoulRouter;
 
 public class FloatingWindowService extends Service implements EndCall {
 
-    private WindowManager windowManager;
+    public WindowManager windowManager;
     private LinearLayout floatingView;
-    private LinearLayout recyLayout;
-    MyAdapter adapter;
-    List<String> list;
+    public LinearLayout recyLayout;
+    public MyAdapter adapter;
+    public List<String> list;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -63,6 +62,8 @@ public class FloatingWindowService extends Service implements EndCall {
     private static Map<Integer, String> map = new HashMap<>();
 
     static {
+//        map.put(0,"获取Bubble");
+//        map.put(12,"发个Bubble");
         map.put(1, "剪刀石头布");
         map.put(2, "骰子");
         map.put(3, "防撤%s");
@@ -71,7 +72,9 @@ public class FloatingWindowService extends Service implements EndCall {
         map.put(6, "BUBBLE");
         map.put(7, "跳转");
         map.put(8, "保存");
-        map.put(9,"广告%s");
+        map.put(9, "广告%s");
+        map.put(10, "头像");
+        map.put(11,"本地撤回%s");
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -176,9 +179,9 @@ public class FloatingWindowService extends Service implements EndCall {
         recyLayout.setBackgroundColor(0xFFFFFFFF);
         TextView close = new TextView(this);
         close.setText("X     ");
-        close.setTextSize(20);
+        close.setTextSize(24);
         close.setGravity(Gravity.END);
-        LinearLayout.LayoutParams cl = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams cl = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 100);
         close.setLayoutParams(cl);
         close.setOnClickListener(v -> windowManager.removeView(recyLayout));
         recyLayout.addView(close);
@@ -233,6 +236,10 @@ public class FloatingWindowService extends Service implements EndCall {
                     itemList.add(String.format(value, XDataUtil.isHideAd(this) ? "已开启" : "已关闭"));
                     continue;
                 }
+                if (value.contains("本地撤回")) {
+                    itemList.add(String.format(value, XDataUtil.isLocalRecall(this) ? "已开启" : "已关闭"));
+                    continue;
+                }
                 itemList.add(value);
             }
         } else {
@@ -247,6 +254,10 @@ public class FloatingWindowService extends Service implements EndCall {
                     }
                     if (value.contains("广告")) {
                         itemList.add(String.format(value, XDataUtil.isHideAd(this) ? "已开启" : "已关闭"));
+                        continue;
+                    }
+                    if (value.contains("本地撤回")) {
+                        itemList.add(String.format(value, XDataUtil.isLocalRecall(this) ? "已开启" : "已关闭"));
                         continue;
                     }
                     itemList.add(value);
@@ -286,10 +297,6 @@ public class FloatingWindowService extends Service implements EndCall {
                 //
                 XDiaLogUtil.showGame(FloatingWindowService.this, XDataUtil.GAME_DICE);
                 break;
-//            case "2":
-//                // 防撤回
-//                XDataUtil.recall(this);
-//                break;
             case "验证":
                 // 验证
                 XDiaLogUtil.showCheck(FloatingWindowService.this);
@@ -299,41 +306,19 @@ public class FloatingWindowService extends Service implements EndCall {
                 stopService(new Intent(FloatingWindowService.this, FloatingWindowService.class));
                 break;
             case "BUBBLE":
-//                XDiaLogUtil.jumpUser(this);
-                list = LogToFile.readBubble(null);
-                if (list.size() > 0) {
-                    WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                            WindowManager.LayoutParams.WRAP_CONTENT,
-                            WindowManager.LayoutParams.WRAP_CONTENT,
-                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
-                                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
-                                    WindowManager.LayoutParams.TYPE_PHONE,
-                            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                            PixelFormat.TRANSLUCENT);
-
-                    int bubbleSize = XDataUtil.getXDataIntValue(this, XDataUtil.BUBBLE_SIZE);
-//                    if (bubbleSize == 0 || bubbleSize != list.size()) {
-                    String data = list.get(list.size() - 1);
-                    String[] split = data.split("-->");
-                    String dataString = split[1];
-                    Type listType = new TypeToken<List<BubblingListItem>>() {
-                    }.getType();
-//                // 将JSON字符串转换为List集合
-                    List<BubblingListItem> bubblingList = GsonUtil.build().fromJson(dataString, listType);
-                    bubblingList.get(0).setTopDate(split[0]);
-                    adapter.setData(bubblingList, 0);
-                    XDataUtil.setXDataValue(this, XDataUtil.BUBBLE_SIZE, String.valueOf(list.size()));
-                    windowManager.addView(recyLayout, params);
-//                    }
-                } else {
-                    XToast.showToast(this, "还没有BUBBLE数据");
-                }
+                XDiaLogUtil.showBubble(this);
                 break;
             case "跳转":
                 XDiaLogUtil.jumpUser(this);
+//                Request request = new Request.Builder().url("https://api-user.soulapp.cn/v3/update/user/info?pageId=HomePage_AvatarChoice").build();
+//                XOkHttpUtil.soulInterceptor(request, null);
                 break;
             case "保存":
-                XDataUtil.saveUser(this);
+                XDiaLogUtil.saveUser(this);
+                break;
+            case "头像":
+                XToast.showToast(this,"暂不可用");
+//                XDiaLogUtil.avatar(this);
                 break;
             default:
                 if (finalItems[which].contains("防撤")) {
@@ -341,6 +326,9 @@ public class FloatingWindowService extends Service implements EndCall {
                 }
                 if (finalItems[which].contains("广告")) {
                     XDataUtil.hideAd(this);
+                }
+                if (finalItems[which].contains("本地撤回")) {
+                    XDataUtil.localRecall(this);
                 }
                 break;
         }
@@ -474,7 +462,8 @@ public class FloatingWindowService extends Service implements EndCall {
             holder.itemView.setOnClickListener(v -> {
                 endCall.jump(currentId);
                 XThread.runOnMain(() ->
-                        SoulRouter.i().e("/account/userHomepage").w("KEY_USER_ID_ECPT", item.getUserIdEcpt()).d());
+//                        SoulRouter.i().e("/account/userHomepage").w("KEY_USER_ID_ECPT", item.getUserIdEcpt()).d());
+                        SoulRouter.i().e("/chat/conversationActivity").w("userIdEcpt", item.getUserIdEcpt()).d());
             });
         }
 
@@ -499,16 +488,18 @@ public class FloatingWindowService extends Service implements EndCall {
         }
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (floatingView != null) {
-            windowManager.removeView(floatingView);
-        }
-        if (recyLayout != null) {
-            windowManager.removeView(recyLayout);
-
+        try{
+            if (floatingView != null) {
+                windowManager.removeView(floatingView);
+            }
+            if (recyLayout != null) {
+                windowManager.removeView(recyLayout);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

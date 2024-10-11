@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ public class LogToFile {
     private static final String DEFAULT_PATH = "/storage/emulated/0/apptools";
     private static final String BUBBLE_PATH = "/storage/emulated/0/apptools/bubble";
     private static final String USER_PATH = "/storage/emulated/0/apptools/user";
+    private static final String URL_PATH = "/storage/emulated/0/apptools/url";
+    private static final String URL_FILE = "SUrl-%s-%s.txt";
 
     /**
      * 1.不带tag
@@ -66,6 +69,31 @@ public class LogToFile {
         }
     }
 
+    public static void writeUrl(String tag, URL url, String content) {
+        try {
+            Date now = new Date(System.currentTimeMillis());
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            String date = format.format(now);
+            Format format1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            String textData = format1.format(now);
+            String fileName = String.format(URL_FILE, tag, date);
+            File logFile = new File(URL_PATH, fileName);
+            if (!logFile.exists()) {
+                File parentDir = logFile.getParentFile();
+                if (parentDir != null && !parentDir.exists()) {
+                    boolean dirsCreated = parentDir.mkdirs();
+                }
+                logFile.createNewFile();
+            }
+            FileWriter fw = new FileWriter(logFile, true);
+            fw.write(textData + "-->" + (url.getPath() + ": ") + content + "\n");
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void writeBubble(String content) {
         try {
             Date now = new Date(System.currentTimeMillis());
@@ -104,7 +132,7 @@ public class LogToFile {
                 String line;
                 while ((line = br.readLine()) != null) {
                     // 处理每一行
-                    Log.i("LogToFile",line);
+                    Log.i("LogToFile", line);
                     list.add(line);
                 }
             } catch (IOException e) {
