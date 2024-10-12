@@ -50,6 +50,8 @@ public class XDataUtil {
 
     public static Integer LOCAL_RECALL=11;
 
+    public static Integer CLOSE_WATER=12;
+
     static {
         typeMap.put(GAME_FINGER, "FINGER");
         typeMap.put(GAME_DICE, "DICE");
@@ -61,6 +63,7 @@ public class XDataUtil {
         typeMap.put(BUBBLE_SIZE, "BUBBLE_SIZE");
         typeMap.put(AVATAR, "AVATAR");
         typeMap.put(LOCAL_RECALL, "LOCAL_RECALL");
+        typeMap.put(CLOSE_WATER, "CLOSE_WATER");
     }
 
     public static String getXDataValue(Context context, int type) {
@@ -251,6 +254,23 @@ public class XDataUtil {
 
     public static boolean isLocalRecall(Context context) {
         String recallValue = XDataUtil.getXDataValue(context, XDataUtil.LOCAL_RECALL);
+        return "1".equals(recallValue);
+    }
+
+    public static void closeWater(Context context) {
+        if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
+            return;
+        }
+        XDataUtil.setXDataValue(context, XDataUtil.CLOSE_WATER, isCloseWater(context) ? "0" : "1");
+        if (!isCloseWater(context)) {
+            XToast.showToast(context, "去水印已关闭");
+        } else {
+            XToast.showToast(context, "去水印已开启");
+        }
+    }
+
+    public static boolean isCloseWater(Context context) {
+        String recallValue = XDataUtil.getXDataValue(context, XDataUtil.CLOSE_WATER);
         return "1".equals(recallValue);
     }
 

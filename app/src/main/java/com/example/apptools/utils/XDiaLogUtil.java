@@ -2,6 +2,7 @@ package com.example.apptools.utils;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.text.Editable;
@@ -18,10 +19,19 @@ import com.example.apptools.utils.soul.util.BubbleUtil;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class XDiaLogUtil {
+
+    private static Map<String,String[]> list = new HashMap<>();
+    static {
+        list.put("游戏",new String[]{"剪刀石头布","骰子"});
+        list.put("BUBBLE",new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE"});
+        list.put("其他",new String[]{"跳转","保存","验证","关闭"});
+    }
 
     public static void showGame(Context context, Integer type) {
         if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
@@ -230,6 +240,88 @@ public class XDiaLogUtil {
                     break;
                 case "发送BUBBLE":
                     XDiaLogUtil.sendBubble(service);
+                    break;
+                default:
+                    break;
+            }
+        });
+        AlertDialog dialog = builder.create();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        } else {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
+        dialog.show();
+    }
+
+    public static void showListDialog(FloatingWindowService service, String item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(service);
+        String[] items = list.get(item);
+        builder.setItems(items, (dialog, which) -> {
+            switch (items[which]) {
+                case "BUBBLE列表":
+                    service.list = LogToFile.readBubble(null);
+                    if (service.list.size() > 0) {
+                        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                                WindowManager.LayoutParams.WRAP_CONTENT,
+                                WindowManager.LayoutParams.WRAP_CONTENT,
+                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                                        WindowManager.LayoutParams.TYPE_PHONE,
+                                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                                PixelFormat.TRANSLUCENT);
+
+                        int bubbleSize = XDataUtil.getXDataIntValue(service, XDataUtil.BUBBLE_SIZE);
+//                    if (bubbleSize == 0 || bubbleSize != list.size()) {
+                        String data = service.list.get(service.list.size() - 1);
+                        String[] split = data.split("-->");
+                        String dataString = split[1];
+                        Type listType = new TypeToken<List<BubblingListItem>>() {
+                        }.getType();
+//                // 将JSON字符串转换为List集合
+                        List<BubblingListItem> bubblingList = GsonUtil.build().fromJson(dataString, listType);
+                        bubblingList.get(0).setTopDate(split[0]);
+                        service.adapter.setData(bubblingList, 0);
+                        XDataUtil.setXDataValue(service, XDataUtil.BUBBLE_SIZE, String.valueOf(service.list.size()));
+                        service.windowManager.addView(service.recyLayout, params);
+//                    }
+                    } else {
+                        XToast.showToast(service, "还没有BUBBLE数据");
+                    }
+                    break;
+                case "获取BUBBLE列表":
+                    BubbleUtil.requestBubbleList(service);
+                    break;
+                case "发送BUBBLE":
+                    XDiaLogUtil.sendBubble(service);
+                    break;
+                case "剪刀石头布":
+                    // 剪刀石头布
+                    XDiaLogUtil.showGame(service, XDataUtil.GAME_FINGER);
+                    break;
+                case "骰子":
+                    //
+                    XDiaLogUtil.showGame(service, XDataUtil.GAME_DICE);
+                    break;
+                case "跳转":
+                    XDiaLogUtil.jumpUser(service);
+//                Request request = new Request.Builder().url("https://api-user.soulapp.cn/v3/update/user/info?pageId=HomePage_AvatarChoice").build();
+//                XOkHttpUtil.soulInterceptor(request, null);
+                    break;
+                case "保存":
+                    XDiaLogUtil.saveUser(service);
+                    break;
+                case "头像":
+                    XToast.showToast(service, "暂不可用");
+//                XDiaLogUtil.avatar(this);
+                    break;
+                case "验证":
+                    // 验证
+                    XDiaLogUtil.showCheck(service);
+                    break;
+                case "关闭":
+                    // 关闭
+                    service.stopService(new Intent(service, FloatingWindowService.class));
                     break;
                 default:
                     break;

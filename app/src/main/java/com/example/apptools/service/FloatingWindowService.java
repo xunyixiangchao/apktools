@@ -32,7 +32,6 @@ import com.example.apptools.utils.GsonUtil;
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XDiaLogUtil;
 import com.example.apptools.utils.XThread;
-import com.example.apptools.utils.XToast;
 import com.example.apptools.utils.soul.bean.bubble.BubblingListItem;
 import com.google.gson.reflect.TypeToken;
 
@@ -64,17 +63,16 @@ public class FloatingWindowService extends Service implements EndCall {
     static {
 //        map.put(0,"获取Bubble");
 //        map.put(12,"发个Bubble");
-        map.put(1, "剪刀石头布");
-        map.put(2, "骰子");
+
+//        map.put(1, "剪刀石头布");
+//        map.put(2, "骰子");
+        map.put(1, "游戏");
+        map.put(2, "本地撤回%s");
         map.put(3, "防撤%s");
-        map.put(4, "验证");
-        map.put(5, "关闭");
-        map.put(6, "BUBBLE");
-        map.put(7, "跳转");
-        map.put(8, "保存");
-        map.put(9, "广告%s");
-        map.put(10, "头像");
-        map.put(11,"本地撤回%s");
+        map.put(4, "BUBBLE");
+        map.put(5, "广告%s");
+        map.put(6, "去水印%s");
+        map.put(7, "其他");
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -228,16 +226,7 @@ public class FloatingWindowService extends Service implements EndCall {
         List<String> itemList = new ArrayList<>();
         if ("666999".equals(checkData)) {
             for (String value : map.values()) {
-                if (value.contains("防撤")) {
-                    itemList.add(String.format(value, XDataUtil.isRecall(this) ? "已开启" : "未开启"));
-                    continue;
-                }
-                if (value.contains("广告")) {
-                    itemList.add(String.format(value, XDataUtil.isHideAd(this) ? "已开启" : "已关闭"));
-                    continue;
-                }
-                if (value.contains("本地撤回")) {
-                    itemList.add(String.format(value, XDataUtil.isLocalRecall(this) ? "已开启" : "已关闭"));
+                if (mergeItem(value, itemList)) {
                     continue;
                 }
                 itemList.add(value);
@@ -248,16 +237,7 @@ public class FloatingWindowService extends Service implements EndCall {
                 String[] list = listString.split("_");
                 for (String item : list) {
                     String value = map.get(Integer.valueOf(item));
-                    if (value.contains("防撤")) {
-                        itemList.add(String.format(value, XDataUtil.isRecall(this) ? "已开启" : "未开启"));
-                        continue;
-                    }
-                    if (value.contains("广告")) {
-                        itemList.add(String.format(value, XDataUtil.isHideAd(this) ? "已开启" : "已关闭"));
-                        continue;
-                    }
-                    if (value.contains("本地撤回")) {
-                        itemList.add(String.format(value, XDataUtil.isLocalRecall(this) ? "已开启" : "已关闭"));
+                    if (mergeItem(value, itemList)) {
                         continue;
                     }
                     itemList.add(value);
@@ -268,8 +248,6 @@ public class FloatingWindowService extends Service implements EndCall {
         }
         items = itemList.toArray(new String[0]);
         AlertDialog.Builder builder = new AlertDialog.Builder(FloatingWindowService.this);
-//        String[] items = {"石头剪刀布", "骰子", String.format("防撤%s", XDataUtil.isRecall(this) ? "已开启" : "未开启"),
-//                "验证", "关闭", "跳转", "url"};
         String[] finalItems = items;
         builder.setItems(items, (dialog, which) -> {
             switch (which) {
@@ -287,38 +265,32 @@ public class FloatingWindowService extends Service implements EndCall {
         dialog.show();
     }
 
+    private boolean mergeItem(String value, List<String> itemList) {
+        if (value.contains("防撤")) {
+            itemList.add(String.format(value, XDataUtil.isRecall(this) ? "已开启" : "未开启"));
+            return true;
+        }
+        if (value.contains("广告")) {
+            itemList.add(String.format(value, XDataUtil.isHideAd(this) ? "已开启" : "已关闭"));
+            return true;
+        }
+        if (value.contains("本地撤回")) {
+            itemList.add(String.format(value, XDataUtil.isLocalRecall(this) ? "已开启" : "已关闭"));
+            return true;
+        }
+        if (value.contains("去水印")) {
+            itemList.add(String.format(value, XDataUtil.isCloseWater(this) ? "已开启" : "已关闭"));
+            return true;
+        }
+        return false;
+    }
+
     private void converge(String[] finalItems, int which) {
         switch (finalItems[which]) {
-            case "剪刀石头布":
-                // 剪刀石头布
-                XDiaLogUtil.showGame(FloatingWindowService.this, XDataUtil.GAME_FINGER);
-                break;
-            case "骰子":
-                //
-                XDiaLogUtil.showGame(FloatingWindowService.this, XDataUtil.GAME_DICE);
-                break;
-            case "验证":
-                // 验证
-                XDiaLogUtil.showCheck(FloatingWindowService.this);
-                break;
-            case "关闭":
-                // 关闭
-                stopService(new Intent(FloatingWindowService.this, FloatingWindowService.class));
-                break;
+            case "游戏":
             case "BUBBLE":
-                XDiaLogUtil.showBubble(this);
-                break;
-            case "跳转":
-                XDiaLogUtil.jumpUser(this);
-//                Request request = new Request.Builder().url("https://api-user.soulapp.cn/v3/update/user/info?pageId=HomePage_AvatarChoice").build();
-//                XOkHttpUtil.soulInterceptor(request, null);
-                break;
-            case "保存":
-                XDiaLogUtil.saveUser(this);
-                break;
-            case "头像":
-                XToast.showToast(this,"暂不可用");
-//                XDiaLogUtil.avatar(this);
+            case "其他":
+                XDiaLogUtil.showListDialog(this, finalItems[which]);
                 break;
             default:
                 if (finalItems[which].contains("防撤")) {
@@ -329,6 +301,9 @@ public class FloatingWindowService extends Service implements EndCall {
                 }
                 if (finalItems[which].contains("本地撤回")) {
                     XDataUtil.localRecall(this);
+                }
+                if (finalItems[which].contains("去水印")) {
+                    XDataUtil.closeWater(this);
                 }
                 break;
         }
@@ -456,13 +431,11 @@ public class FloatingWindowService extends Service implements EndCall {
             }
             String url = String.format("https://china-img.soulapp.cn/heads/%s.png?x-oss-process=image/resize,m_fill,h_181,w_181,type_2/format,webp", item.getAvatarName());
             Glide.with(mContext).load(url).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(holder.icon);
-//            Picasso.get().load(url).into(holder.icon);
             holder.title.setText(item.getSignature());
-            holder.desc.setText(item.getStateTip() + " " + (TextUtils.isEmpty(item.getDesc()) ? "" : item.getDesc()));
+            holder.desc.setText(TextUtils.isEmpty(item.getDesc()) ? item.getStateTip() : item.getDesc());
             holder.itemView.setOnClickListener(v -> {
                 endCall.jump(currentId);
                 XThread.runOnMain(() ->
-//                        SoulRouter.i().e("/account/userHomepage").w("KEY_USER_ID_ECPT", item.getUserIdEcpt()).d());
                         SoulRouter.i().e("/chat/conversationActivity").w("userIdEcpt", item.getUserIdEcpt()).d());
             });
         }
@@ -491,14 +464,14 @@ public class FloatingWindowService extends Service implements EndCall {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        try{
+        try {
             if (floatingView != null) {
                 windowManager.removeView(floatingView);
             }
             if (recyLayout != null) {
                 windowManager.removeView(recyLayout);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
