@@ -26,11 +26,12 @@ import java.util.Map;
 
 public class XDiaLogUtil {
 
-    private static Map<String,String[]> list = new HashMap<>();
+    private static Map<String, String[]> list = new HashMap<>();
+
     static {
-        list.put("游戏",new String[]{"剪刀石头布","骰子"});
-        list.put("BUBBLE",new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE"});
-        list.put("其他",new String[]{"跳转","保存","验证","关闭"});
+        list.put("游戏", new String[]{"剪刀石头布", "骰子"});
+        list.put("BUBBLE", new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE"});
+        list.put("其他", new String[]{"跳转", "保存", "验证", "关闭"});
     }
 
     public static void showGame(Context context, Integer type) {
@@ -282,8 +283,11 @@ public class XDiaLogUtil {
                         List<BubblingListItem> bubblingList = GsonUtil.build().fromJson(dataString, listType);
                         bubblingList.get(0).setTopDate(split[0]);
                         service.adapter.setData(bubblingList, 0);
+                        service.recyclerView.scrollToPosition(0);
+                        service.scrollPosition = 0;
                         XDataUtil.setXDataValue(service, XDataUtil.BUBBLE_SIZE, String.valueOf(service.list.size()));
                         service.windowManager.addView(service.recyLayout, params);
+                        service.handler.postDelayed(service.runnable, service.delayMillis);
 //                    }
                     } else {
                         XToast.showToast(service, "还没有BUBBLE数据");

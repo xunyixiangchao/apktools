@@ -35,4 +35,9 @@ public class BubbleUtil {
         model.a(request);
         XToast.showToast(context,"发送了Bubble");
     }
+
+    public static void prick(String userIdEcpt) {
+        BubbleViewModel model = new BubbleViewModel();
+        model.h(userIdEcpt,null);
+    }
 }
