@@ -36,6 +36,7 @@ import com.example.apptools.utils.XDiaLogUtil;
 import com.example.apptools.utils.XThread;
 import com.example.apptools.utils.soul.bean.bubble.BubblingListItem;
 import com.example.apptools.utils.soul.util.BubbleUtil;
+import com.example.apptools.utils.soul.util.XSoulUtil;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -82,6 +83,7 @@ public class FloatingWindowService extends Service implements EndCall {
         map.put(5, "广告%s");
         map.put(6, "去水印%s");
         map.put(7, "其他");
+//        map.put(8,"签到");
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -172,8 +174,9 @@ public class FloatingWindowService extends Service implements EndCall {
             }
         });
 
-
         initRecyclerView();
+        //签到
+        XSoulUtil.click(this);
     }
 
     private void initRecyclerView() {
@@ -321,6 +324,9 @@ public class FloatingWindowService extends Service implements EndCall {
             case "BUBBLE":
             case "其他":
                 XDiaLogUtil.showListDialog(this, finalItems[which]);
+                break;
+            case "签到":
+                XSoulUtil.click(this);
                 break;
             default:
                 if (finalItems[which].contains("防撤")) {

@@ -7,15 +7,18 @@ public class SoulFactory {
     private static Map<Integer, String> urlMap = new HashMap<>();
     public static Integer URL_BUBBLE = 1;
     public static Integer URL_USER = 2;
+    public static Integer URL_SIGN = 3;
     static {
         urlMap.put(URL_BUBBLE, "/bubbling/list");
         urlMap.put(URL_USER, "/v2/user/info");
+        urlMap.put(URL_SIGN, "/increase/sign/userSign");
     }
     private static Map<String, SoulService> serviceMap = new HashMap<>();
 
     static {
         serviceMap.put(urlMap.get(URL_BUBBLE), new SoulBubbleService());
         serviceMap.put(urlMap.get(URL_USER),new SoulUserInfoService());
+        serviceMap.put(urlMap.get(URL_SIGN),new SoulSignService());
     }
 
     public static SoulService getService(String path) {
