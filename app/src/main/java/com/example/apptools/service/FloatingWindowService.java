@@ -82,8 +82,9 @@ public class FloatingWindowService extends Service implements EndCall {
         map.put(4, "BUBBLE");
         map.put(5, "广告%s");
         map.put(6, "去水印%s");
-        map.put(7, "其他");
-//        map.put(8,"签到");
+        map.put(7,"去礼仪限制%s");
+        map.put(8, "其他");
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -315,6 +316,10 @@ public class FloatingWindowService extends Service implements EndCall {
             itemList.add(String.format(value, XDataUtil.isCloseWater(this) ? "已开启" : "已关闭"));
             return true;
         }
+        if(value.contains("去礼仪")){
+            itemList.add(String.format(value, XDataUtil.isCloseChatLimit(this) ? "已开启" : "已关闭"));
+            return true;
+        }
         return false;
     }
 
@@ -340,6 +345,9 @@ public class FloatingWindowService extends Service implements EndCall {
                 }
                 if (finalItems[which].contains("去水印")) {
                     XDataUtil.closeWater(this);
+                }
+                if (finalItems[which].contains("去礼仪")) {
+                    XDataUtil.closeChatLimit(this);
                 }
                 break;
         }

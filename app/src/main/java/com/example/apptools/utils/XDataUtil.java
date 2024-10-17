@@ -48,9 +48,11 @@ public class XDataUtil {
 
     public static Integer AVATAR = 10;
 
-    public static Integer LOCAL_RECALL=11;
+    public static Integer LOCAL_RECALL = 11;
 
-    public static Integer CLOSE_WATER=12;
+    public static Integer CLOSE_WATER = 12;
+
+    public static Integer CLOSE_CHAT_LIMIT = 13;
 
     static {
         typeMap.put(GAME_FINGER, "FINGER");
@@ -64,6 +66,7 @@ public class XDataUtil {
         typeMap.put(AVATAR, "AVATAR");
         typeMap.put(LOCAL_RECALL, "LOCAL_RECALL");
         typeMap.put(CLOSE_WATER, "CLOSE_WATER");
+        typeMap.put(CLOSE_CHAT_LIMIT, "CLOSE_CHAT_LIMIT");
     }
 
     public static String getXDataValue(Context context, int type) {
@@ -271,6 +274,24 @@ public class XDataUtil {
 
     public static boolean isCloseWater(Context context) {
         String recallValue = XDataUtil.getXDataValue(context, XDataUtil.CLOSE_WATER);
+        return "1".equals(recallValue);
+    }
+
+
+    public static void closeChatLimit(Context context) {
+        if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
+            return;
+        }
+        XDataUtil.setXDataValue(context, XDataUtil.CLOSE_CHAT_LIMIT, isCloseChatLimit(context) ? "0" : "1");
+        if (!isCloseChatLimit(context)) {
+            XToast.showToast(context, "去礼仪已关闭");
+        } else {
+            XToast.showToast(context, "去礼仪已开启");
+        }
+    }
+
+    public static boolean isCloseChatLimit(Context context) {
+        String recallValue = XDataUtil.getXDataValue(context, XDataUtil.CLOSE_CHAT_LIMIT);
         return "1".equals(recallValue);
     }
 

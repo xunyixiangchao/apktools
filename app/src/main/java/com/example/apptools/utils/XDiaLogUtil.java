@@ -16,6 +16,7 @@ import cn.soul.android.component.SoulRouter;
 import com.example.apptools.service.FloatingWindowService;
 import com.example.apptools.utils.soul.bean.bubble.BubblingListItem;
 import com.example.apptools.utils.soul.util.BubbleUtil;
+import com.example.apptools.utils.soul.util.XSoulUtil;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -31,7 +32,7 @@ public class XDiaLogUtil {
     static {
         list.put("游戏", new String[]{"剪刀石头布", "骰子"});
         list.put("BUBBLE", new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE"});
-        list.put("其他", new String[]{"跳转", "保存", "验证", "关闭"});
+        list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到"});
     }
 
     public static void showGame(Context context, Integer type) {
@@ -326,6 +327,9 @@ public class XDiaLogUtil {
                 case "关闭":
                     // 关闭
                     service.stopService(new Intent(service, FloatingWindowService.class));
+                    break;
+                case "签到":
+                    XSoulUtil.click(service);
                     break;
                 default:
                     break;
