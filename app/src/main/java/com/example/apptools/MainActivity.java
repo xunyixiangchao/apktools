@@ -17,10 +17,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.apptools.utils.GsonUtil;
 import com.example.apptools.utils.LogToFile;
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XFloatingUtil;
+import com.example.apptools.utils.XToast;
+import com.example.apptools.utils.soul.util.XSocket;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +73,27 @@ public class MainActivity extends AppCompatActivity {
 
         XFloatingUtil.init(this);
 
+        EventBus.getDefault().register(this);
+        EventBus.getDefault().post(new MyEvent("消息"));
+    }
+
+    public static class MyEvent {
+        private String msg;
+
+        public MyEvent(String msg) {
+            this.msg = msg;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void handle(MyEvent event) {
+        System.out.println(GsonUtil.build().toJson(event));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     public void tag(String tag, String content) {
@@ -76,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         /**
          * invoke-static {p1, p2}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
          */
-        Log.i(tag,content);
+        Log.i(tag, content);
     }
 
     @Override

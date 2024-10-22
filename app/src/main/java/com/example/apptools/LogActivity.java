@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XOkHttpUtil;
+import com.example.apptools.utils.soul.util.XImMessageUtil;
+import com.soul.im.protos.CommandGroup;
 
 import cn.soul.android.component.DiceFingerMsg;
 
@@ -16,6 +18,7 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.soulapp.imlib.msg.ImMessage;
 import cn.soulapp.lib.basic.app.MartianApp;
 
 public class LogActivity extends AppCompatActivity {
@@ -51,5 +54,10 @@ public class LogActivity extends AppCompatActivity {
             String xDataValue = getXDataValue(MartianApp.b(), XDataUtil.AVATAR);
             hashMap.put("avatarName", xDataValue);
         }
+
+        XImMessageUtil.logMessage(new ImMessage());
+
+
+        XImMessageUtil.recvMessage(new CommandGroup());
     }
 }

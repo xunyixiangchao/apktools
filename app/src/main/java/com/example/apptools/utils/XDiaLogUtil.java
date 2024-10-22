@@ -16,10 +16,12 @@ import cn.soul.android.component.SoulRouter;
 import com.example.apptools.service.FloatingWindowService;
 import com.example.apptools.utils.soul.bean.bubble.BubblingListItem;
 import com.example.apptools.utils.soul.util.BubbleUtil;
+import com.example.apptools.utils.soul.util.XSocket;
 import com.example.apptools.utils.soul.util.XSoulUtil;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +34,7 @@ public class XDiaLogUtil {
     static {
         list.put("游戏", new String[]{"剪刀石头布", "骰子"});
         list.put("BUBBLE", new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE"});
-        list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到"});
+        list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到","连接"});
     }
 
     public static void showGame(Context context, Integer type) {
@@ -202,60 +204,6 @@ public class XDiaLogUtil {
         dialog.show();
     }
 
-    public static void showBubble(FloatingWindowService service) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(service);
-        String[] items = {"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE"};
-        builder.setItems(items, (dialog, which) -> {
-            switch (items[which]) {
-                case "BUBBLE列表":
-                    service.list = LogToFile.readBubble(null);
-                    if (service.list.size() > 0) {
-                        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                                WindowManager.LayoutParams.WRAP_CONTENT,
-                                WindowManager.LayoutParams.WRAP_CONTENT,
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
-                                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
-                                        WindowManager.LayoutParams.TYPE_PHONE,
-                                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                                PixelFormat.TRANSLUCENT);
-
-                        int bubbleSize = XDataUtil.getXDataIntValue(service, XDataUtil.BUBBLE_SIZE);
-//                    if (bubbleSize == 0 || bubbleSize != list.size()) {
-                        String data = service.list.get(service.list.size() - 1);
-                        String[] split = data.split("-->");
-                        String dataString = split[1];
-                        Type listType = new TypeToken<List<BubblingListItem>>() {
-                        }.getType();
-//                // 将JSON字符串转换为List集合
-                        List<BubblingListItem> bubblingList = GsonUtil.build().fromJson(dataString, listType);
-                        bubblingList.get(0).setTopDate(split[0]);
-                        service.adapter.setData(bubblingList, 0);
-                        XDataUtil.setXDataValue(service, XDataUtil.BUBBLE_SIZE, String.valueOf(service.list.size()));
-                        service.windowManager.addView(service.recyLayout, params);
-//                    }
-                    } else {
-                        XToast.showToast(service, "还没有BUBBLE数据");
-                    }
-                    break;
-                case "获取BUBBLE列表":
-                    BubbleUtil.requestBubbleList(service);
-                    break;
-                case "发送BUBBLE":
-                    XDiaLogUtil.sendBubble(service);
-                    break;
-                default:
-                    break;
-            }
-        });
-        AlertDialog dialog = builder.create();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
-        } else {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        }
-        dialog.show();
-    }
-
     public static void showListDialog(FloatingWindowService service, String item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(service);
         String[] items = list.get(item);
@@ -330,6 +278,8 @@ public class XDiaLogUtil {
                     break;
                 case "签到":
                     XSoulUtil.click(service);
+                case "连接":
+                    Socket soulSocket = XSocket.getSoulSocket("114.55.211.197", 8180);
                     break;
                 default:
                     break;

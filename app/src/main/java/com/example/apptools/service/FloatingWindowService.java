@@ -84,7 +84,6 @@ public class FloatingWindowService extends Service implements EndCall {
         map.put(6, "去水印%s");
         map.put(7,"去礼仪限制%s");
         map.put(8, "其他");
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -329,9 +328,6 @@ public class FloatingWindowService extends Service implements EndCall {
             case "BUBBLE":
             case "其他":
                 XDiaLogUtil.showListDialog(this, finalItems[which]);
-                break;
-            case "签到":
-                XSoulUtil.click(this);
                 break;
             default:
                 if (finalItems[which].contains("防撤")) {

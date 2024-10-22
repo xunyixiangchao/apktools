@@ -29,6 +29,10 @@ public class LogToFile {
     private static final String URL_PATH = "/storage/emulated/0/apptools/url";
     private static final String URL_FILE = "SUrl-%s-%s.txt";
 
+
+    private static final String TAG_FILE = "S%s-%s.txt";
+
+
     /**
      * 1.不带tag
      * invoke-static {v2}, Lcom/example/apptools/utils/LogToFile;->write(Ljava/lang/String;)V
@@ -171,6 +175,30 @@ public class LogToFile {
         } catch (Exception e) {
             e.printStackTrace();
             XToast.showToast(context, "保存异常" + e.toString());
+        }
+    }
+
+    public static void writeTag(String tag, String content) {
+        try {
+            Date now = new Date(System.currentTimeMillis());
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            String date = format.format(now);
+            Format format1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            String textData = format1.format(now);
+            String fileName = String.format(TAG_FILE, tag, date);
+            File logFile = new File(DEFAULT_PATH, fileName);
+            if (!logFile.exists()) {
+                File parentDir = logFile.getParentFile();
+                if (parentDir != null && !parentDir.exists()) {
+                    boolean dirsCreated = parentDir.mkdirs();
+                }
+                logFile.createNewFile();
+            }
+            FileWriter fw = new FileWriter(logFile, true);
+            fw.write(textData + "-->" + content + "\n");
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
