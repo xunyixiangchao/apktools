@@ -10,6 +10,7 @@ import android.text.InputType;
 import android.text.Selection;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import cn.soul.android.component.SoulRouter;
 
@@ -285,6 +286,28 @@ public class XDiaLogUtil {
                     break;
             }
         });
+        AlertDialog dialog = builder.create();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        } else {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
+        dialog.show();
+    }
+
+    public static void showHintDialog(Context context, String hint) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        TextView textView = new TextView(context);
+        textView.setHint(hint);
+        int padding =30;
+        textView.setPadding(padding,padding,padding,padding);
+        builder.setTitle("提示");
+        builder.setCancelable(false);
+        builder.setView(textView);
+        builder.setPositiveButton("确定",
+                (dialog, which) -> XThread.runOnMain(() ->
+                        context.stopService(new Intent(context, FloatingWindowService.class))
+                ));
         AlertDialog dialog = builder.create();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);

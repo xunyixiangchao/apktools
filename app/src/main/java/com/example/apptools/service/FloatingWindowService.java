@@ -31,6 +31,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.apptools.utils.GsonUtil;
+import com.example.apptools.utils.NetAsyncUtil;
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XDiaLogUtil;
 import com.example.apptools.utils.XThread;
@@ -177,6 +178,9 @@ public class FloatingWindowService extends Service implements EndCall {
         initRecyclerView();
         //签到
         XSoulUtil.click(this);
+
+        new NetAsyncUtil(this, XDataUtil.typeMap.get(XDataUtil.NET_CONFIG)).execute(XDataUtil.CONFIG_URL);
+        XDataUtil.checkConfig(this);
     }
 
     private void initRecyclerView() {

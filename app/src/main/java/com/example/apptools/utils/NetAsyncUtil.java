@@ -40,11 +40,12 @@ public class NetAsyncUtil extends AsyncTask<String, Void, String> {
 
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream in = connection.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in,"gbk"));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     result.append(line).append(",");
                 }
+                result.deleteCharAt(result.length() - 1);
             }
         } catch (IOException e) {
             Log.e(TAG, "Error reading remote config file: " + e.toString());

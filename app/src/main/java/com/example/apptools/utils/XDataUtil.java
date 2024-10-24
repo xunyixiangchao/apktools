@@ -1,18 +1,9 @@
 package com.example.apptools.utils;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
-import android.text.Editable;
-import android.text.Selection;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.Toast;
-
-import com.example.apptools.service.FloatingWindowService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 public class XDataUtil {
+
+    private static String VERSION = "1.0.1";
 
     private static String TAG = "XDataUtil";
     public static Map<Integer, String> typeMap = new HashMap<>();
@@ -54,6 +47,12 @@ public class XDataUtil {
 
     public static Integer CLOSE_CHAT_LIMIT = 13;
 
+    public static Integer NET_CONFIG = 14;
+
+
+    public static String CONFIG_URL = "http://67.218.158.220/curl/xconfig.txt";
+    public static String CHECK_USER_URL = "http://67.218.158.220/curl/checkUser.txt";
+
     static {
         typeMap.put(GAME_FINGER, "FINGER");
         typeMap.put(GAME_DICE, "DICE");
@@ -67,6 +66,7 @@ public class XDataUtil {
         typeMap.put(LOCAL_RECALL, "LOCAL_RECALL");
         typeMap.put(CLOSE_WATER, "CLOSE_WATER");
         typeMap.put(CLOSE_CHAT_LIMIT, "CLOSE_CHAT_LIMIT");
+        typeMap.put(NET_CONFIG, "NET_CONFIG");
     }
 
     public static String getXDataValue(Context context, int type) {
@@ -149,8 +149,8 @@ public class XDataUtil {
             XDataUtil.setXDataValue(context, XDataUtil.IS_CHECK, "1");
             return true;
         }
-        String checkUrl = "http://67.218.158.220/curl/xconfig.txt";
-        new NetAsyncUtil(context, typeMap.get(NET_CHECK)).execute(checkUrl);
+
+        new NetAsyncUtil(context, typeMap.get(NET_CHECK)).execute(CHECK_USER_URL);
         String result = XDataUtil.getXDataValue(context, typeMap.get(NET_CHECK));
         // 获取当前日期
         Date currentDate = new Date();
@@ -295,4 +295,14 @@ public class XDataUtil {
         return "1".equals(recallValue);
     }
 
+    public static void checkConfig(Context context) {
+        String result = XDataUtil.getXDataValue(context, typeMap.get(NET_CONFIG));
+        if (TextUtils.isEmpty(result) || !VERSION.equals(result.split("#")[0])) {
+            defaultAll(context);
+            if(!TextUtils.isEmpty(result)){
+                XToast.showToast(context, result.split("#")[1]);
+                XDiaLogUtil.showHintDialog(context,result.split("#")[1]);
+            }
+        }
+    }
 }

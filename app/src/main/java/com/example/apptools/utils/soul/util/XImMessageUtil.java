@@ -18,7 +18,6 @@ public class XImMessageUtil {
     }
 
     public static void recvMessage(CommandGroup commandGroup) {
-        Log.i(TAG, "接收：" + commandGroup.toString());
         Log.i(TAG, "接收：" + GsonUtil.build().toJson(commandGroup));
         LogToFile.writeTag(TAG, "接收：" + GsonUtil.build().toJson(GsonUtil.build().toJson(commandGroup)));
     }
