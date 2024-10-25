@@ -330,7 +330,7 @@ public class XDataUtil {
             context.clearPost(context.autoBubbleRun);
             XToast.showToast(context, "自动BUBBLE已关闭");
         } else {
-            context.delayPost(context.autoBubbleRun, 1000 * 45);
+            context.delayPost(context.autoBubbleRun, context.autoDelayTime);
             XToast.showToast(context, "自动BUBBLE已开启");
         }
     }

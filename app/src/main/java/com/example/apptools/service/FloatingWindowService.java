@@ -65,6 +65,7 @@ public class FloatingWindowService extends Service implements EndCall {
     public Runnable autoBubbleRun;
     public int scrollPosition = 0;
     public int delayMillis = 500; // 每次滚动之间的延迟时间（以毫秒为单位）
+    public int autoDelayTime = 1000 * 60 * 45;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -192,11 +193,11 @@ public class FloatingWindowService extends Service implements EndCall {
             public void run() {
                 BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
                 // 继续运行此任务
-                delayPost(autoBubbleRun, 1000 * 45);
+                delayPost(autoBubbleRun, autoDelayTime);
             }
         };
         if (XDataUtil.isAutoBubble(this)) {
-            delayPost(autoBubbleRun, 1000 * 45);
+            delayPost(autoBubbleRun, autoDelayTime);
         }
 
         new NetAsyncUtil(this, XDataUtil.typeMap.get(XDataUtil.NET_CONFIG)).execute(XDataUtil.CONFIG_URL);
@@ -656,7 +657,7 @@ public class FloatingWindowService extends Service implements EndCall {
             }
             if (recyLayout != null) {
                 windowManager.removeView(recyLayout);
-                clearPost(runnable,autoBubbleRun);
+                clearPost(runnable, autoBubbleRun);
             }
         } catch (Exception e) {
             e.printStackTrace();
