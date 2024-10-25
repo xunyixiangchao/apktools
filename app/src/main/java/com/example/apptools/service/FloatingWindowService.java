@@ -651,6 +651,7 @@ public class FloatingWindowService extends Service implements EndCall {
             if (recyLayout != null) {
                 windowManager.removeView(recyLayout);
                 handler.removeCallbacks(runnable);
+                handler.removeCallbacks(autoBubbleRun);
             }
         } catch (Exception e) {
             e.printStackTrace();
