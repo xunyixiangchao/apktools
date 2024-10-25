@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Objects;
 
 public class NetAsyncUtil extends AsyncTask<String, Void, String> {
 
@@ -40,7 +41,7 @@ public class NetAsyncUtil extends AsyncTask<String, Void, String> {
 
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream in = connection.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in,"gbk"));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in, "gbk"));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     result.append(line).append(",");
@@ -62,5 +63,8 @@ public class NetAsyncUtil extends AsyncTask<String, Void, String> {
         // 在这里处理读取到的配置文件数据
         Log.d(TAG, "Remote config file content: " + result);
         XDataUtil.setXDataValue(mContext, type, result);
+        if (Objects.equals(XDataUtil.typeMap.get(XDataUtil.NET_CONFIG), type)) {
+            XDataUtil.checkConfig(mContext);
+        }
     }
 }

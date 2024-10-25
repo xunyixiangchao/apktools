@@ -35,7 +35,7 @@ public class XDiaLogUtil {
     static {
         list.put("游戏", new String[]{"剪刀石头布", "骰子"});
         list.put("BUBBLE", new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE"});
-        list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到","连接"});
+        list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到"});
     }
 
     public static void showGame(Context context, Integer type) {
@@ -185,6 +185,7 @@ public class XDiaLogUtil {
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         EditText editText = new EditText(context);
+        editText.setText(XDataUtil.getXDataValue(context, XDataUtil.SEND_BUBBLE));
         Editable editable = editText.getText();
         if (editable != null) {
             Selection.setSelection(editable, editable.length());
@@ -193,8 +194,10 @@ public class XDiaLogUtil {
         builder.setView(editText);
         builder.setNegativeButton("取消", null);
         builder.setPositiveButton("确定",
-                (dialog, which) -> XThread.runOnMain(() ->
-                        BubbleUtil.sendBubble(context, editable.toString())
+                (dialog, which) -> XThread.runOnMain(() -> {
+                            BubbleUtil.sendBubble(context, editable.toString());
+                            XDataUtil.setXDataValue(context, XDataUtil.SEND_BUBBLE, editText.getText().toString());
+                        }
                 ));
         AlertDialog dialog = builder.create();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -299,8 +302,8 @@ public class XDiaLogUtil {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         TextView textView = new TextView(context);
         textView.setHint(hint);
-        int padding =30;
-        textView.setPadding(padding,padding,padding,padding);
+        int padding = 30;
+        textView.setPadding(padding, padding, padding, padding);
         builder.setTitle("提示");
         builder.setCancelable(false);
         builder.setView(textView);

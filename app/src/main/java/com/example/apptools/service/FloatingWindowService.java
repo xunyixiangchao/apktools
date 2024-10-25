@@ -77,13 +77,14 @@ public class FloatingWindowService extends Service implements EndCall {
 
 //        map.put(1, "剪刀石头布");
 //        map.put(2, "骰子");
+        map.put(0, "**此增强不收取任何费用，仅作逆向学习用！群673020836**");
         map.put(1, "游戏");
         map.put(2, "本地撤回%s");
         map.put(3, "防撤%s");
         map.put(4, "BUBBLE");
         map.put(5, "广告%s");
         map.put(6, "去水印%s");
-        map.put(7,"去礼仪限制%s");
+        map.put(7, "去礼仪限制%s");
         map.put(8, "其他");
     }
 
@@ -176,11 +177,12 @@ public class FloatingWindowService extends Service implements EndCall {
         });
 
         initRecyclerView();
-        //签到
-        XSoulUtil.click(this);
+        if (XDataUtil.isChecked(this)) {
+            //签到
+            XSoulUtil.click(this);
+        }
 
         new NetAsyncUtil(this, XDataUtil.typeMap.get(XDataUtil.NET_CONFIG)).execute(XDataUtil.CONFIG_URL);
-        XDataUtil.checkConfig(this);
     }
 
     private void initRecyclerView() {
@@ -319,7 +321,7 @@ public class FloatingWindowService extends Service implements EndCall {
             itemList.add(String.format(value, XDataUtil.isCloseWater(this) ? "已开启" : "已关闭"));
             return true;
         }
-        if(value.contains("去礼仪")){
+        if (value.contains("去礼仪")) {
             itemList.add(String.format(value, XDataUtil.isCloseChatLimit(this) ? "已开启" : "已关闭"));
             return true;
         }

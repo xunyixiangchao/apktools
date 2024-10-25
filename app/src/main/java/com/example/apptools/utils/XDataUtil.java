@@ -49,6 +49,8 @@ public class XDataUtil {
 
     public static Integer NET_CONFIG = 14;
 
+    public static Integer SEND_BUBBLE = 15;
+
 
     public static String CONFIG_URL = "http://67.218.158.220/curl/xconfig.txt";
     public static String CHECK_USER_URL = "http://67.218.158.220/curl/checkUser.txt";
@@ -67,6 +69,7 @@ public class XDataUtil {
         typeMap.put(CLOSE_WATER, "CLOSE_WATER");
         typeMap.put(CLOSE_CHAT_LIMIT, "CLOSE_CHAT_LIMIT");
         typeMap.put(NET_CONFIG, "NET_CONFIG");
+        typeMap.put(SEND_BUBBLE, "SEND_BUBBLE");
     }
 
     public static String getXDataValue(Context context, int type) {
