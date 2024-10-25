@@ -327,8 +327,10 @@ public class XDataUtil {
         }
         XDataUtil.setXDataValue(context, XDataUtil.AUTO_SEND_BUBBLE, isAutoBubble(context) ? "0" : "1");
         if (!isAutoBubble(context)) {
+            context.clearPost(context.autoBubbleRun);
             XToast.showToast(context, "自动BUBBLE已关闭");
         } else {
+            context.delayPost(context.autoBubbleRun, 1000 * 45);
             XToast.showToast(context, "自动BUBBLE已开启");
         }
     }

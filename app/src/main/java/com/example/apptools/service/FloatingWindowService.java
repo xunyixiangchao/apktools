@@ -62,7 +62,7 @@ public class FloatingWindowService extends Service implements EndCall {
 
     public Handler handler;
     public Runnable runnable;
-    Runnable autoBubbleRun;
+    public Runnable autoBubbleRun;
     public int scrollPosition = 0;
     public int delayMillis = 500; // 每次滚动之间的延迟时间（以毫秒为单位）
 
@@ -187,15 +187,15 @@ public class FloatingWindowService extends Service implements EndCall {
             //签到
             XSoulUtil.sign(this);
         }
+        autoBubbleRun = new Runnable() {
+            @Override
+            public void run() {
+                BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
+                // 继续运行此任务
+                delayPost(autoBubbleRun, 1000 * 45);
+            }
+        };
         if (XDataUtil.isAutoBubble(this)) {
-            autoBubbleRun = new Runnable() {
-                @Override
-                public void run() {
-                    BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
-                    // 继续运行此任务
-                    delayPost(autoBubbleRun, 1000 * 45);
-                }
-            };
             delayPost(autoBubbleRun, 1000 * 45);
         }
 
@@ -204,6 +204,12 @@ public class FloatingWindowService extends Service implements EndCall {
 
     public void delayPost(Runnable run, long delay) {
         handler.postDelayed(run, delay);
+    }
+
+    public void clearPost(Runnable... runnables) {
+        for (Runnable run : runnables) {
+            handler.removeCallbacks(run);
+        }
     }
 
     private void initRecyclerView() {
@@ -226,7 +232,7 @@ public class FloatingWindowService extends Service implements EndCall {
         close2.setText("停 ");
         close2.setTextSize(24);
         close2.setGravity(Gravity.END);
-        close2.setOnClickListener(v -> handler.removeCallbacks(runnable));
+        close2.setOnClickListener(v -> clearPost(runnable));
         recyLayout.addView(close2);
         recyclerView = new RecyclerView(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -403,7 +409,7 @@ public class FloatingWindowService extends Service implements EndCall {
     public void jump(int currentId) {
         if (recyLayout != null) {
             windowManager.removeView(recyLayout);
-            handler.removeCallbacks(runnable);
+            clearPost(runnable);
         }
     }
 
@@ -650,8 +656,7 @@ public class FloatingWindowService extends Service implements EndCall {
             }
             if (recyLayout != null) {
                 windowManager.removeView(recyLayout);
-                handler.removeCallbacks(runnable);
-                handler.removeCallbacks(autoBubbleRun);
+                clearPost(runnable,autoBubbleRun);
             }
         } catch (Exception e) {
             e.printStackTrace();
