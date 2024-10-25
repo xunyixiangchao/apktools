@@ -10,11 +10,19 @@ import android.text.InputType;
 import android.text.Selection;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import cn.soul.android.component.SoulRouter;
 
 import com.example.apptools.service.FloatingWindowService;
+import com.example.apptools.utils.soul.SoulAvatarService;
+import com.example.apptools.utils.soul.bean.avatar.AvatarsItem;
 import com.example.apptools.utils.soul.bean.bubble.BubblingListItem;
 import com.example.apptools.utils.soul.util.BubbleUtil;
 import com.example.apptools.utils.soul.util.XSocket;
@@ -23,6 +31,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +45,7 @@ public class XDiaLogUtil {
         list.put("游戏", new String[]{"剪刀石头布", "骰子"});
         list.put("BUBBLE", new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE"});
         list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到"});
+        list.put("头像", new String[]{"获取头像", "设置头像"});
     }
 
     public static void showGame(Context context, Integer type) {
@@ -208,6 +218,7 @@ public class XDiaLogUtil {
         dialog.show();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public static void showListDialog(FloatingWindowService service, String item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(service);
         String[] items = list.get(item);
@@ -225,7 +236,6 @@ public class XDiaLogUtil {
                                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                                 PixelFormat.TRANSLUCENT);
 
-                        int bubbleSize = XDataUtil.getXDataIntValue(service, XDataUtil.BUBBLE_SIZE);
 //                    if (bubbleSize == 0 || bubbleSize != list.size()) {
                         String data = service.list.get(service.list.size() - 1);
                         String[] split = data.split("-->");
@@ -236,6 +246,13 @@ public class XDiaLogUtil {
                         List<BubblingListItem> bubblingList = GsonUtil.build().fromJson(dataString, listType);
                         bubblingList.get(0).setTopDate(split[0]);
                         service.adapter.setData(bubblingList, 0);
+                        LinearLayoutManager layoutManager = new LinearLayoutManager(service);
+                        service.recyclerView.setLayoutManager(layoutManager);
+                        service.recyclerView.setLayoutParams(new LinearLayout.LayoutParams(service.getResources().getDisplayMetrics().widthPixels, service.getResources().getDisplayMetrics().widthPixels));
+                        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(service.recyclerView.getContext(),
+                                layoutManager.getOrientation());
+                        service.recyclerView.addItemDecoration(dividerItemDecoration);
+                        service.recyclerView.setAdapter(service.adapter);
                         service.recyclerView.scrollToPosition(0);
                         service.scrollPosition = 0;
                         XDataUtil.setXDataValue(service, XDataUtil.BUBBLE_SIZE, String.valueOf(service.list.size()));
@@ -268,9 +285,43 @@ public class XDiaLogUtil {
                 case "保存":
                     XDiaLogUtil.saveUser(service);
                     break;
-                case "头像":
-                    XToast.showToast(service, "暂不可用");
+                case "获取头像":
+//                    XToast.showToast(service, "暂不可用");
 //                XDiaLogUtil.avatar(this);
+                    XSoulUtil.getRegisterAvatars(service);
+                    break;
+                case "设置头像":
+                    service.list = LogToFile.readTag(SoulAvatarService.TAG, null);
+                    if (service.list.size() > 0) {
+                        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                                WindowManager.LayoutParams.WRAP_CONTENT,
+                                WindowManager.LayoutParams.WRAP_CONTENT,
+                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                                        WindowManager.LayoutParams.TYPE_PHONE,
+                                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                                PixelFormat.TRANSLUCENT);
+                        List<AvatarsItem> avatarsItems = new ArrayList<>();
+                        service.list.forEach(data -> {
+                            String s = data.split("-->")[1];
+                            Type listType = new TypeToken<List<AvatarsItem>>() {
+                            }.getType();
+                            // 将JSON字符串转换为List集合
+                            List<AvatarsItem> bubblingList = GsonUtil.build().fromJson(s, listType);
+                            avatarsItems.addAll(bubblingList);
+                        });
+                        service.avatarAdapter.setData(avatarsItems, 0);
+                        service.recyclerView.setLayoutManager(new GridLayoutManager(service, 4));
+                        service.recyclerView.setLayoutParams(new LinearLayout.LayoutParams(service.getResources().getDisplayMetrics().widthPixels,
+                                service.getResources().getDisplayMetrics().widthPixels));
+                        service.recyclerView.setAdapter(service.avatarAdapter);
+                        service.recyclerView.scrollToPosition(0);
+                        service.scrollPosition = 0;
+                        service.windowManager.addView(service.recyLayout, params);
+//                    }
+                    } else {
+                        XToast.showToast(service, "还没有头像数据");
+                    }
                     break;
                 case "验证":
                     // 验证
@@ -281,7 +332,7 @@ public class XDiaLogUtil {
                     service.stopService(new Intent(service, FloatingWindowService.class));
                     break;
                 case "签到":
-                    XSoulUtil.click(service);
+                    XSoulUtil.sign(service);
                 case "连接":
                     Socket soulSocket = XSocket.getSoulSocket("114.55.211.197", 8180);
                     break;

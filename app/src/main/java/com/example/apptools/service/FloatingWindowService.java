@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,6 +36,7 @@ import com.example.apptools.utils.NetAsyncUtil;
 import com.example.apptools.utils.XDataUtil;
 import com.example.apptools.utils.XDiaLogUtil;
 import com.example.apptools.utils.XThread;
+import com.example.apptools.utils.soul.bean.avatar.AvatarsItem;
 import com.example.apptools.utils.soul.bean.bubble.BubblingListItem;
 import com.example.apptools.utils.soul.util.BubbleUtil;
 import com.example.apptools.utils.soul.util.XSoulUtil;
@@ -47,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 
 import cn.soul.android.component.SoulRouter;
-
 public class FloatingWindowService extends Service implements EndCall {
 
     public WindowManager windowManager;
@@ -55,6 +56,7 @@ public class FloatingWindowService extends Service implements EndCall {
     public LinearLayout recyLayout;
     public RecyclerView recyclerView;
     public MyAdapter adapter;
+    public AvatarAdapter avatarAdapter;
     public List<String> list;
 
     public Handler handler;
@@ -85,7 +87,8 @@ public class FloatingWindowService extends Service implements EndCall {
         map.put(5, "广告%s");
         map.put(6, "去水印%s");
         map.put(7, "去礼仪限制%s");
-        map.put(8, "其他");
+//        map.put(8, "头像");
+        map.put(9, "其他");
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -142,6 +145,7 @@ public class FloatingWindowService extends Service implements EndCall {
             private int initialX, initialY;
             private float initialTouchX, initialTouchY;
 
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -179,7 +183,7 @@ public class FloatingWindowService extends Service implements EndCall {
         initRecyclerView();
         if (XDataUtil.isChecked(this)) {
             //签到
-            XSoulUtil.click(this);
+            XSoulUtil.sign(this);
         }
 
         new NetAsyncUtil(this, XDataUtil.typeMap.get(XDataUtil.NET_CONFIG)).execute(XDataUtil.CONFIG_URL);
@@ -217,6 +221,7 @@ public class FloatingWindowService extends Service implements EndCall {
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
         adapter = new MyAdapter(this, this);
+        avatarAdapter = new AvatarAdapter(this, this);
         recyclerView.setAdapter(adapter);
         recyLayout.addView(recyclerView);
         handler = new Handler();
@@ -259,6 +264,7 @@ public class FloatingWindowService extends Service implements EndCall {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void showListDialog() {
         String[] items = new String[0];
         String checkData = XDataUtil.getXDataValue(this, XDataUtil.CHECK);
@@ -328,11 +334,13 @@ public class FloatingWindowService extends Service implements EndCall {
         return false;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void converge(String[] finalItems, int which) {
         switch (finalItems[which]) {
             case "游戏":
             case "BUBBLE":
             case "其他":
+//            case "头像":能获取头像，调用接口设置，但是接口返回失败
                 XDiaLogUtil.showListDialog(this, finalItems[which]);
                 break;
             default:
@@ -513,6 +521,107 @@ public class FloatingWindowService extends Service implements EndCall {
             }
         }
     }
+
+
+    public static class AvatarAdapter extends RecyclerView.Adapter<AvatarAdapter.AvatarViewHolder> {
+        private Context mContext;
+        private List<AvatarsItem> mList;
+        private int currentId;
+        private EndCall endCall;
+
+
+        public AvatarAdapter(Context context, EndCall endCall) {
+            this.mContext = context;
+            this.endCall = endCall;
+        }
+
+        public void setData(List<AvatarsItem> list, int id) {
+            mList = list;
+            currentId = id;
+            XThread.runOnMain(() -> notifyDataSetChanged());
+        }
+
+        public void addData(List<AvatarsItem> list, int id) {
+            if (mList != null) {
+                mList.addAll(list);
+            } else {
+                mList = list;
+            }
+            currentId = id;
+            XThread.runOnMain(() -> notifyDataSetChanged());
+        }
+
+        @NonNull
+        @Override
+        public AvatarAdapter.AvatarViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout pLayout = new LinearLayout(parent.getContext());
+            pLayout.setOrientation(LinearLayout.VERTICAL);
+            pLayout.setLayoutParams(ll);
+            TextView topView = new TextView(parent.getContext());
+            LinearLayout.LayoutParams topLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 100);
+            topView.setLayoutParams(topLayout);
+            topView.setBackgroundColor(0xFF999999);
+            topView.setGravity(Gravity.CENTER);
+            topView.setTag("top");
+            pLayout.addView(topView);
+            LinearLayout layout = new LinearLayout(parent.getContext());
+            layout.setBackgroundColor(0xFFFFFFFF);
+            layout.setOrientation(LinearLayout.HORIZONTAL);
+            layout.setLayoutParams(ll);
+            int padding = (int) (parent.getContext().getResources().getDisplayMetrics().density * 5);
+            layout.setPadding(padding, padding, padding, padding);
+            ImageView icon = new ImageView(parent.getContext());
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(181, 181);
+            icon.setLayoutParams(layoutParams);
+            icon.setTag("icon");
+//            icon.setBackgroundColor(0xFFBB86FC);
+            layout.addView(icon);
+            pLayout.addView(layout);
+            return new AvatarViewHolder(pLayout);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull AvatarAdapter.AvatarViewHolder holder, int position) {
+            AvatarsItem item = mList.get(position);
+            if (TextUtils.isEmpty(item.getTopDate())) {
+                holder.top.setVisibility(View.GONE);
+            } else {
+                holder.top.setVisibility(View.VISIBLE);
+                holder.top.setText(item.getTopDate());
+            }
+            String url = String.format("https://china-img.soulapp.cn/heads/%s.png?x-oss-process=image/resize,m_fill,h_181,w_181,type_2/format,webp", item.getAvatarName());
+            Glide.with(mContext).load(url).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(holder.icon);
+            holder.itemView.setOnClickListener(v -> {
+                XThread.runOnMain(() -> {
+                    HashMap hashMap = new HashMap();
+                    hashMap.put("avatarParams", item.getAvatarParams());
+                    hashMap.put("avatarName", item.getAvatarName());
+                    hashMap.put("oriAvatarName", item.getOriAvatarName());
+                    dt.a.n(hashMap, null);
+                    endCall.jump(currentId);
+                });
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return (mList == null || mList.size() == 0) ? 0 : mList.size();
+        }
+
+        public static class AvatarViewHolder extends RecyclerView.ViewHolder {
+            private ImageView icon;
+            private TextView top;
+
+            public AvatarViewHolder(@NonNull View itemView) {
+                super(itemView);
+                icon = itemView.findViewWithTag("icon");
+                top = itemView.findViewWithTag("top");
+
+            }
+        }
+    }
+
 
     @Override
     public void onDestroy() {

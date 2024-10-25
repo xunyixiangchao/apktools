@@ -1,7 +1,5 @@
 package com.example.apptools.utils.soul;
 
-import android.content.Context;
-
 import java.util.Map;
 
 import okhttp3.Request;

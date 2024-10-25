@@ -186,7 +186,7 @@ public class LogToFile {
             Format format1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             String textData = format1.format(now);
             String fileName = String.format(TAG_FILE, tag, date);
-            File logFile = new File(DEFAULT_PATH, fileName);
+            File logFile = new File(DEFAULT_PATH + "/" + tag, fileName);
             if (!logFile.exists()) {
                 File parentDir = logFile.getParentFile();
                 if (parentDir != null && !parentDir.exists()) {
@@ -200,5 +200,32 @@ public class LogToFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static List<String> readTag(String tag, String date) {
+        List<String> list = new ArrayList<>();
+        try {
+            Date now = new Date(System.currentTimeMillis());
+            if (TextUtils.isEmpty(date)) {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                date = format.format(now);
+            }
+            String fileName = String.format(TAG_FILE, tag, date);
+            File logFile = new File(DEFAULT_PATH + "/" + tag, fileName);
+            try (BufferedReader br = new BufferedReader(new FileReader(logFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    // 处理每一行
+                    Log.i("LogToFile", line);
+                    list.add(line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

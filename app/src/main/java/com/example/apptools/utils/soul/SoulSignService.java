@@ -3,7 +3,6 @@ package com.example.apptools.utils.soul;
 import android.util.Log;
 
 import com.example.apptools.utils.GsonUtil;
-import com.example.apptools.utils.XThread;
 import com.example.apptools.utils.XToast;
 import com.example.apptools.utils.soul.bean.sign.SignResponse;
 

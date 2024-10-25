@@ -1,12 +1,16 @@
 package com.example.apptools.utils.soul.util;
 
+import android.content.Context;
 
-import com.example.apptools.service.FloatingWindowService;
+import cn.soulapp.android.component.home.api.user.user.a;
 
-import sf.a;
 
 public class XSoulUtil {
-    public static void click(FloatingWindowService service) {
-        a.a.c(null);
+    public static void sign(Context service) {
+        sf.a.a.c(null);
+    }
+
+    public static void getRegisterAvatars(Context service) {
+        a.M(null);
     }
 }
