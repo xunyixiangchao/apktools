@@ -43,7 +43,7 @@ public class XDiaLogUtil {
 
     static {
         list.put("游戏", new String[]{"剪刀石头布", "骰子"});
-        list.put("BUBBLE", new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE"});
+        list.put("BUBBLE", new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE", "自动发送%s"});
         list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到"});
         list.put("头像", new String[]{"获取头像", "设置头像"});
     }
@@ -222,7 +222,16 @@ public class XDiaLogUtil {
     public static void showListDialog(FloatingWindowService service, String item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(service);
         String[] items = list.get(item);
-        builder.setItems(items, (dialog, which) -> {
+        List<String> all = new ArrayList<>();
+        for (int i = 0; i < items.length; i++) {
+            if (items[i].contains("自动发送")) {
+                all.add(String.format(items[i], XDataUtil.isAutoBubble(service) ? "已开启" : "未开启"));
+                continue;
+            }
+            all.add(items[i]);
+        }
+        String[] newList = all.toArray(new String[0]);
+        builder.setItems(newList, (dialog, which) -> {
             switch (items[which]) {
                 case "BUBBLE列表":
                     service.list = LogToFile.readBubble(null);
@@ -337,6 +346,9 @@ public class XDiaLogUtil {
                     Socket soulSocket = XSocket.getSoulSocket("114.55.211.197", 8180);
                     break;
                 default:
+                    if (items[which].contains("自动发送")) {
+                        XDataUtil.autoBubble(service);
+                    }
                     break;
             }
         });

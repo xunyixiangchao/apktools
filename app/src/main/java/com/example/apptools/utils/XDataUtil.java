@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.example.apptools.service.FloatingWindowService;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,6 +53,8 @@ public class XDataUtil {
 
     public static Integer SEND_BUBBLE = 15;
 
+    public static Integer AUTO_SEND_BUBBLE = 16;
+
 
     public static String CONFIG_URL = "http://67.218.158.220/curl/xconfig.txt";
     public static String CHECK_USER_URL = "http://67.218.158.220/curl/checkUser.txt";
@@ -70,6 +74,8 @@ public class XDataUtil {
         typeMap.put(CLOSE_CHAT_LIMIT, "CLOSE_CHAT_LIMIT");
         typeMap.put(NET_CONFIG, "NET_CONFIG");
         typeMap.put(SEND_BUBBLE, "SEND_BUBBLE");
+        typeMap.put(AUTO_SEND_BUBBLE, "AUTO_SEND_BUBBLE");
+
     }
 
     public static String getXDataValue(Context context, int type) {
@@ -302,10 +308,28 @@ public class XDataUtil {
         String result = XDataUtil.getXDataValue(context, typeMap.get(NET_CONFIG));
         if (TextUtils.isEmpty(result) || !VERSION.equals(result.split("#")[0])) {
             defaultAll(context);
-            if(!TextUtils.isEmpty(result)){
+            if (!TextUtils.isEmpty(result)) {
                 XToast.showToast(context, result.split("#")[1]);
-                XDiaLogUtil.showHintDialog(context,result.split("#")[1]);
+                XDiaLogUtil.showHintDialog(context, result.split("#")[1]);
             }
+        }
+    }
+
+
+    public static boolean isAutoBubble(Context context) {
+        String recallValue = XDataUtil.getXDataValue(context, XDataUtil.AUTO_SEND_BUBBLE);
+        return "1".equals(recallValue);
+    }
+
+    public static void autoBubble(FloatingWindowService context) {
+        if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
+            return;
+        }
+        XDataUtil.setXDataValue(context, XDataUtil.AUTO_SEND_BUBBLE, isAutoBubble(context) ? "0" : "1");
+        if (!isAutoBubble(context)) {
+            XToast.showToast(context, "自动BUBBLE已关闭");
+        } else {
+            XToast.showToast(context, "自动BUBBLE已开启");
         }
     }
 }

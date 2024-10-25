@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.soul.android.component.SoulRouter;
+
 public class FloatingWindowService extends Service implements EndCall {
 
     public WindowManager windowManager;
@@ -61,6 +62,7 @@ public class FloatingWindowService extends Service implements EndCall {
 
     public Handler handler;
     public Runnable runnable;
+    Runnable autoBubbleRun;
     public int scrollPosition = 0;
     public int delayMillis = 500; // 每次滚动之间的延迟时间（以毫秒为单位）
 
@@ -179,14 +181,29 @@ public class FloatingWindowService extends Service implements EndCall {
                 }
             }
         });
-
+        handler = new Handler();
         initRecyclerView();
         if (XDataUtil.isChecked(this)) {
             //签到
             XSoulUtil.sign(this);
         }
+        if (XDataUtil.isAutoBubble(this)) {
+            autoBubbleRun = new Runnable() {
+                @Override
+                public void run() {
+                    BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
+                    // 继续运行此任务
+                    delayPost(autoBubbleRun,1000*45);
+                }
+            };
+            delayPost(autoBubbleRun,1000*45);
+        }
 
         new NetAsyncUtil(this, XDataUtil.typeMap.get(XDataUtil.NET_CONFIG)).execute(XDataUtil.CONFIG_URL);
+    }
+
+    public void delayPost(Runnable run,long delay){
+        handler.postDelayed(run, 1000*45);
     }
 
     private void initRecyclerView() {
@@ -224,7 +241,7 @@ public class FloatingWindowService extends Service implements EndCall {
         avatarAdapter = new AvatarAdapter(this, this);
         recyclerView.setAdapter(adapter);
         recyLayout.addView(recyclerView);
-        handler = new Handler();
+
         runnable = new Runnable() {
             @Override
             public void run() {
@@ -234,7 +251,7 @@ public class FloatingWindowService extends Service implements EndCall {
                         scrollPosition += 1;
                         recyclerView.smoothScrollToPosition(scrollPosition);
                         // 继续运行此任务
-                        handler.postDelayed(runnable, 1000);
+                        delayPost(runnable,1000);
                     }
                 }
             }
@@ -620,6 +637,7 @@ public class FloatingWindowService extends Service implements EndCall {
 
             }
         }
+
     }
 
 
