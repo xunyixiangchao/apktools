@@ -193,17 +193,17 @@ public class FloatingWindowService extends Service implements EndCall {
                 public void run() {
                     BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
                     // 继续运行此任务
-                    delayPost(autoBubbleRun,1000*45);
+                    delayPost(autoBubbleRun, 1000 * 45);
                 }
             };
-            delayPost(autoBubbleRun,1000*45);
+            delayPost(autoBubbleRun, 1000 * 45);
         }
 
         new NetAsyncUtil(this, XDataUtil.typeMap.get(XDataUtil.NET_CONFIG)).execute(XDataUtil.CONFIG_URL);
     }
 
-    public void delayPost(Runnable run,long delay){
-        handler.postDelayed(run, 1000*45);
+    public void delayPost(Runnable run, long delay) {
+        handler.postDelayed(run, delay);
     }
 
     private void initRecyclerView() {
@@ -251,7 +251,7 @@ public class FloatingWindowService extends Service implements EndCall {
                         scrollPosition += 1;
                         recyclerView.smoothScrollToPosition(scrollPosition);
                         // 继续运行此任务
-                        delayPost(runnable,1000);
+                        delayPost(runnable, 1000);
                     }
                 }
             }
