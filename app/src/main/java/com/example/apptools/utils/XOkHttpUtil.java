@@ -17,6 +17,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.soulapp.lib.basic.app.MartianApp;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -41,6 +42,14 @@ public class XOkHttpUtil {
 //                Log.e("XOkHttpUtil-3", GsonUtil.build().toJson(newResponse.body().string()));
 
             } else {
+                if (XDataUtil.isSwitch(MartianApp.b(), XDataUtil.NET_SWITCH) && !url.getHost().contains("ppp")) {
+                    String text = newResponse.body().string();
+                    Log.i(TAG, "request:" + url + "->response:" + text);
+                    String filter = XDataUtil.getXDataValue(MartianApp.b(), XDataUtil.URL_FILTER);
+                    if (!TextUtils.isEmpty(filter) && url.toString().contains(filter)) {
+                        LogToFile.writeUrl(TAG, url, text);
+                    }
+                }
                 if ("api-user.soulapp.cn".equals(url.getHost())) {
 //                    if (url.getPath().contains("avatar")) {
 //                        LogToFile.writeUrl(TAG, url, newResponse.body().string());

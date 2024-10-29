@@ -21,6 +21,10 @@ public class XDataUtil {
 
     private static String VERSION = "1.0.1";
 
+    private static String ON = "1";
+
+    private static String OFF = "0";
+
     private static String TAG = "XDataUtil";
     public static Map<Integer, String> typeMap = new HashMap<>();
     //石头剪刀
@@ -58,6 +62,10 @@ public class XDataUtil {
 
     public static Integer IS_SIGN = 17;
 
+    public static Integer NET_SWITCH = 18;
+
+    public static Integer URL_FILTER=19;
+
 
     public static String CONFIG_URL = "http://67.218.158.220/curl/xconfig.txt";
     public static String CHECK_USER_URL = "http://67.218.158.220/curl/checkUser.txt";
@@ -79,6 +87,7 @@ public class XDataUtil {
         typeMap.put(SEND_BUBBLE, "SEND_BUBBLE");
         typeMap.put(AUTO_SEND_BUBBLE, "AUTO_SEND_BUBBLE");
         typeMap.put(IS_SIGN, "IS_SIGN");
+        typeMap.put(NET_SWITCH, "NET_SWITCH");
     }
 
     public static String getXDataValue(Context context, int type) {
@@ -348,6 +357,24 @@ public class XDataUtil {
             XToast.showToast(context, "自动BUBBLE已开启");
         }
     }
+
+    public static void commonSwitch(Context context, Integer type) {
+        if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
+            return;
+        }
+        XDataUtil.setXDataValue(context, type, isSwitch(context, type) ? OFF : ON);
+        if (!isSwitch(context, type)) {
+            XToast.showToast(context, "开关已关闭");
+        } else {
+            XToast.showToast(context, "开关已开启");
+        }
+    }
+
+    public static boolean isSwitch(Context context, Integer type) {
+        String recallValue = XDataUtil.getXDataValue(context, type);
+        return ON.equals(recallValue);
+    }
+
 
     public static void sign(FloatingWindowService service) {
         Date now = new Date(System.currentTimeMillis());

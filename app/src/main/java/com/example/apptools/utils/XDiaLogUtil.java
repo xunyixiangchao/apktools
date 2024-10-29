@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import cn.soul.android.component.SoulRouter;
+import okhttp3.Request;
 
 import com.example.apptools.service.FloatingWindowService;
 import com.example.apptools.utils.soul.SoulAvatarService;
@@ -46,6 +47,7 @@ public class XDiaLogUtil {
         list.put("BUBBLE", new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE", "自动发送%s"});
         list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到", "跳转页面"});
         list.put("头像", new String[]{"获取头像", "设置头像"});
+        list.put("工具", new String[]{"网络请求%s", "URL筛选"});
     }
 
     public static void showGame(Context context, Integer type) {
@@ -228,6 +230,10 @@ public class XDiaLogUtil {
                 all.add(String.format(items[i], XDataUtil.isAutoBubble(service) ? "已开启" : "未开启"));
                 continue;
             }
+            if (items[i].contains("网络请求")) {
+                all.add(String.format(items[i], XDataUtil.isSwitch(service, XDataUtil.NET_SWITCH) ? "已开启" : "未开启"));
+                continue;
+            }
             all.add(items[i]);
         }
         String[] newList = all.toArray(new String[0]);
@@ -287,9 +293,9 @@ public class XDiaLogUtil {
                     XDiaLogUtil.showGame(service, XDataUtil.GAME_DICE);
                     break;
                 case "跳转":
-                    XDiaLogUtil.jumpUser(service);
-//                Request request = new Request.Builder().url("https://api-user.soulapp.cn/v3/update/user/info?pageId=HomePage_AvatarChoice").build();
-//                XOkHttpUtil.soulInterceptor(request, null);
+//                    XDiaLogUtil.jumpUser(service);
+                    Request request = new Request.Builder().url("https://api-user.soulapp.cn/v3/update/user/info?pageId=HomePage_AvatarChoice").build();
+                    XOkHttpUtil.soulInterceptor(request, null);
                     break;
                 case "保存":
                     XDiaLogUtil.saveUser(service);
@@ -348,13 +354,47 @@ public class XDiaLogUtil {
                 case "跳转页面":
                     SoulRouter.i().e("chat/imInsight").d();
                     break;
+                case "URL筛选":
+                    XDiaLogUtil.filter(service);
+                    break;
                 default:
                     if (items[which].contains("自动发送")) {
                         XDataUtil.autoBubble(service);
                     }
+                    if (items[which].contains("网络请求")) {
+                        XDataUtil.commonSwitch(service, XDataUtil.NET_SWITCH);
+                    }
                     break;
             }
         });
+        AlertDialog dialog = builder.create();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        } else {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
+        dialog.show();
+    }
+
+    private static void filter(FloatingWindowService context) {
+        if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        EditText editText = new EditText(context);
+        editText.setText(XDataUtil.getXDataValue(context, XDataUtil.URL_FILTER));
+        Editable editable = editText.getText();
+        if (editable != null) {
+            Selection.setSelection(editable, editable.length());
+        }
+        builder.setTitle("URL筛选");
+        builder.setView(editText);
+        builder.setNegativeButton("取消", null);
+        builder.setPositiveButton("确定",
+                (dialog, which) -> XThread.runOnMain(() -> {
+                            XDataUtil.setXDataValue(context, XDataUtil.URL_FILTER, editText.getText().toString());
+                        }
+                ));
         AlertDialog dialog = builder.create();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);

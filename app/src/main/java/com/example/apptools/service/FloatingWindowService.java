@@ -89,6 +89,7 @@ public class FloatingWindowService extends Service implements EndCall {
         map.put(7, "去礼仪限制%s");
 //        map.put(8, "头像");
         map.put(9, "其他");
+        map.put(10, "工具");
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -288,8 +289,8 @@ public class FloatingWindowService extends Service implements EndCall {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showListDialog() {
-        String s = "{\"commands_\":[{\"acceptedMsgId_\":\"\",\"clientType_\":0,\"cmdCase_\":12,\"cmdId_\":\"173016252922270501\",\"cmd_\":{\"bitField0_\":0,\"extMap_\":{\"a\":true,\"b\":\"MAP\",\"c\":{\"isBadge\":\"true\",\"ADMIN_PUSH\":\"1\",\"offlinePush\":\"true\",\"trackId\":\"{\\\"trackId\\\":\\\"17301625292219912\\\",\\\"msgId\\\":\\\"173016252922270501\\\",\\\"categoryId\\\":\\\"63e36863e5a446439042d5f93ec44d0d\\\",\\\"pushType\\\":\\\"SYSTEM\\\"}\",\"from\":\"0\",\"tag\":\"notices\",\"text\":\"🥬菜造反了戳破了我的泡泡\",\"type\":\"PRICK_BUBBLING_PUSH\",\"title\":\"🥬菜造反了戳破了我的泡泡\",\"notice\":\"{\\\"targetUserAvatarName\\\":\\\"avatar-1604452932723-02507\\\",\\\"readMark\\\":false,\\\"prefix\\\":\\\"🥬菜造反了\\\",\\\"extJson\\\":\\\"{\\\\\\\"enableAvatarJump\\\\\\\":true,\\\\\\\"hasImage\\\\\\\":false,\\\\\\\"replyToHasImage\\\\\\\":false}\\\",\\\"targetUserAvatarColor\\\":\\\"HeaderColor_Default\\\",\\\"title\\\":\\\"找聊天搭子:Soul助手\\\",\\\"type\\\":\\\"PRICK_BUBBLING_PUSH\\\",\\\"content\\\":\\\"🥬菜造反了戳破了我的泡泡\\\",\\\"receiverId\\\":401448036,\\\"tab\\\":\\\"interact\\\",\\\"noticeLocation\\\":2,\\\"id\\\":139951508,\\\"actorIdEcpt\\\":\\\"NFlhSlRPbGU4cS9WVlgvZUh1NEExdz09\\\",\\\"targetActivityId\\\":0,\\\"extJsonObj\\\":{\\\"enableAvatarJump\\\":true,\\\"replyToHasImage\\\":false,\\\"hasImage\\\":false},\\\"read\\\":false,\\\"targetId\\\":401448036,\\\"postContent\\\":\\\"找聊天搭子:Soul助手\\\",\\\"subTargetType\\\":\\\"BUBBLING_RECORD\\\",\\\"subTargetUserId\\\":-1,\\\"targetType\\\":\\\"USER\\\",\\\"targetUserId\\\":-1,\\\"subTargetId\\\":265417,\\\"actorId\\\":-1,\\\"createTime\\\":1730162529198}\"},\"e\":{}},\"memoizedIsInitialized\":-1,\"receiver_\":\"401448036\",\"sender_\":\"0\",\"text_\":\"🥬菜造反了戳破了我的泡泡\",\"title_\":\"🥬菜造反了戳破了我的泡泡\",\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0},\"crc_\":\"\",\"encryptedUserId_\":\"\",\"memoizedIsInitialized\":-1,\"soulId_\":\"0\",\"timestamp_\":0,\"type_\":7,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0},{\"acceptedMsgId_\":\"\",\"clientType_\":0,\"cmdCase_\":8,\"cmdId_\":\"\",\"cmd_\":{\"memoizedIsInitialized\":-1,\"readLastMsgId_\":\"1730162529222\",\"remain_\":false,\"timestamp_\":\"0\",\"type_\":0,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0},\"crc_\":\"\",\"encryptedUserId_\":\"\",\"memoizedIsInitialized\":-1,\"soulId_\":\"\",\"timestamp_\":0,\"type_\":3,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0}],\"memoizedIsInitialized\":1,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0}";
-        System.out.println(s);
+//        String s = "{\"commands_\":[{\"acceptedMsgId_\":\"\",\"clientType_\":0,\"cmdCase_\":12,\"cmdId_\":\"173016252922270501\",\"cmd_\":{\"bitField0_\":0,\"extMap_\":{\"a\":true,\"b\":\"MAP\",\"c\":{\"isBadge\":\"true\",\"ADMIN_PUSH\":\"1\",\"offlinePush\":\"true\",\"trackId\":\"{\\\"trackId\\\":\\\"17301625292219912\\\",\\\"msgId\\\":\\\"173016252922270501\\\",\\\"categoryId\\\":\\\"63e36863e5a446439042d5f93ec44d0d\\\",\\\"pushType\\\":\\\"SYSTEM\\\"}\",\"from\":\"0\",\"tag\":\"notices\",\"text\":\"🥬菜造反了戳破了我的泡泡\",\"type\":\"PRICK_BUBBLING_PUSH\",\"title\":\"🥬菜造反了戳破了我的泡泡\",\"notice\":\"{\\\"targetUserAvatarName\\\":\\\"avatar-1604452932723-02507\\\",\\\"readMark\\\":false,\\\"prefix\\\":\\\"🥬菜造反了\\\",\\\"extJson\\\":\\\"{\\\\\\\"enableAvatarJump\\\\\\\":true,\\\\\\\"hasImage\\\\\\\":false,\\\\\\\"replyToHasImage\\\\\\\":false}\\\",\\\"targetUserAvatarColor\\\":\\\"HeaderColor_Default\\\",\\\"title\\\":\\\"找聊天搭子:Soul助手\\\",\\\"type\\\":\\\"PRICK_BUBBLING_PUSH\\\",\\\"content\\\":\\\"🥬菜造反了戳破了我的泡泡\\\",\\\"receiverId\\\":401448036,\\\"tab\\\":\\\"interact\\\",\\\"noticeLocation\\\":2,\\\"id\\\":139951508,\\\"actorIdEcpt\\\":\\\"NFlhSlRPbGU4cS9WVlgvZUh1NEExdz09\\\",\\\"targetActivityId\\\":0,\\\"extJsonObj\\\":{\\\"enableAvatarJump\\\":true,\\\"replyToHasImage\\\":false,\\\"hasImage\\\":false},\\\"read\\\":false,\\\"targetId\\\":401448036,\\\"postContent\\\":\\\"找聊天搭子:Soul助手\\\",\\\"subTargetType\\\":\\\"BUBBLING_RECORD\\\",\\\"subTargetUserId\\\":-1,\\\"targetType\\\":\\\"USER\\\",\\\"targetUserId\\\":-1,\\\"subTargetId\\\":265417,\\\"actorId\\\":-1,\\\"createTime\\\":1730162529198}\"},\"e\":{}},\"memoizedIsInitialized\":-1,\"receiver_\":\"401448036\",\"sender_\":\"0\",\"text_\":\"🥬菜造反了戳破了我的泡泡\",\"title_\":\"🥬菜造反了戳破了我的泡泡\",\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0},\"crc_\":\"\",\"encryptedUserId_\":\"\",\"memoizedIsInitialized\":-1,\"soulId_\":\"0\",\"timestamp_\":0,\"type_\":7,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0},{\"acceptedMsgId_\":\"\",\"clientType_\":0,\"cmdCase_\":8,\"cmdId_\":\"\",\"cmd_\":{\"memoizedIsInitialized\":-1,\"readLastMsgId_\":\"1730162529222\",\"remain_\":false,\"timestamp_\":\"0\",\"type_\":0,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0},\"crc_\":\"\",\"encryptedUserId_\":\"\",\"memoizedIsInitialized\":-1,\"soulId_\":\"\",\"timestamp_\":0,\"type_\":3,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0}],\"memoizedIsInitialized\":1,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0}";
+//        System.out.println(s);
         String[] items = new String[0];
         String checkData = XDataUtil.getXDataValue(this, XDataUtil.CHECK);
         List<String> itemList = new ArrayList<>();
@@ -364,6 +365,7 @@ public class FloatingWindowService extends Service implements EndCall {
             case "游戏":
             case "BUBBLE":
             case "其他":
+            case "工具":
 //            case "头像":能获取头像，调用接口设置，但是接口返回失败
                 XDiaLogUtil.showListDialog(this, finalItems[which]);
                 break;
@@ -657,7 +659,7 @@ public class FloatingWindowService extends Service implements EndCall {
             }
             if (recyLayout != null) {
                 windowManager.removeView(recyLayout);
-                clearPost(runnable, autoBubbleRun,signRun);
+                clearPost(runnable, autoBubbleRun, signRun);
             }
         } catch (Exception e) {
             e.printStackTrace();
