@@ -156,7 +156,7 @@ public class XDataUtil {
     }
 
     public static boolean isChecked(Context context) {
-        return "1".equals(XDataUtil.getXDataValue(context, XDataUtil.IS_CHECK));
+        return isSwitch(context,XDataUtil.IS_CHECK);
     }
 
     public static boolean checkData(Context context, String checkCode, boolean isNeedCheck) {
@@ -241,15 +241,7 @@ public class XDataUtil {
     }
 
     public static void hideAd(Context context) {
-        if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
-            return;
-        }
-        XDataUtil.setXDataValue(context, XDataUtil.HIDE_AD, isHideAd(context) ? "0" : "1");
-        if (!isHideAd(context)) {
-            XToast.showToast(context, "广告已关闭");
-        } else {
-            XToast.showToast(context, "广告已开启");
-        }
+        commonSwitch(context,XDataUtil.HIDE_AD);
     }
 
     /**
@@ -259,61 +251,33 @@ public class XDataUtil {
      * @return
      */
     public static boolean isHideAd(Context context) {
-        String recallValue = XDataUtil.getXDataValue(context, XDataUtil.HIDE_AD);
-        return "1".equals(recallValue);
+        return isSwitch(context,XDataUtil.HIDE_AD);
     }
 
 
     public static void localRecall(Context context) {
-        if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
-            return;
-        }
-        XDataUtil.setXDataValue(context, XDataUtil.LOCAL_RECALL, isLocalRecall(context) ? "0" : "1");
-        if (!isLocalRecall(context)) {
-            XToast.showToast(context, "本地撤回已关闭");
-        } else {
-            XToast.showToast(context, "本地撤回已开启");
-        }
+        commonSwitch(context,XDataUtil.LOCAL_RECALL);
     }
 
     public static boolean isLocalRecall(Context context) {
-        String recallValue = XDataUtil.getXDataValue(context, XDataUtil.LOCAL_RECALL);
-        return "1".equals(recallValue);
+        return isSwitch(context,XDataUtil.LOCAL_RECALL);
     }
 
     public static void closeWater(Context context) {
-        if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
-            return;
-        }
-        XDataUtil.setXDataValue(context, XDataUtil.CLOSE_WATER, isCloseWater(context) ? "0" : "1");
-        if (!isCloseWater(context)) {
-            XToast.showToast(context, "去水印已关闭");
-        } else {
-            XToast.showToast(context, "去水印已开启");
-        }
+        commonSwitch(context,XDataUtil.CLOSE_WATER);
     }
 
     public static boolean isCloseWater(Context context) {
-        String recallValue = XDataUtil.getXDataValue(context, XDataUtil.CLOSE_WATER);
-        return "1".equals(recallValue);
+        return isSwitch(context,XDataUtil.CLOSE_WATER);
     }
 
 
     public static void closeChatLimit(Context context) {
-        if (!XDataUtil.checkData(context, XDataUtil.getXDataValue(context, XDataUtil.CHECK), true)) {
-            return;
-        }
-        XDataUtil.setXDataValue(context, XDataUtil.CLOSE_CHAT_LIMIT, isCloseChatLimit(context) ? "0" : "1");
-        if (!isCloseChatLimit(context)) {
-            XToast.showToast(context, "去礼仪已关闭");
-        } else {
-            XToast.showToast(context, "去礼仪已开启");
-        }
+        commonSwitch(context,XDataUtil.CLOSE_CHAT_LIMIT);
     }
 
     public static boolean isCloseChatLimit(Context context) {
-        String recallValue = XDataUtil.getXDataValue(context, XDataUtil.CLOSE_CHAT_LIMIT);
-        return "1".equals(recallValue);
+        return isSwitch(context,XDataUtil.CLOSE_CHAT_LIMIT);
     }
 
     public static void checkConfig(Context context) {
@@ -327,21 +291,8 @@ public class XDataUtil {
         }
     }
 
-    public static boolean isSigned(Context context) {
-        String xDataValue = XDataUtil.getXDataValue(context, XDataUtil.IS_SIGN);
-        Date now = new Date(System.currentTimeMillis());
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        String date = format.format(now);
-        if (!TextUtils.isEmpty(xDataValue) && date.equals(xDataValue)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public static boolean isAutoBubble(Context context) {
-        String recallValue = XDataUtil.getXDataValue(context, XDataUtil.AUTO_SEND_BUBBLE);
-        return "1".equals(recallValue);
+        return isSwitch(context,XDataUtil.AUTO_SEND_BUBBLE);
     }
 
     public static void autoBubble(FloatingWindowService context) {
@@ -375,12 +326,23 @@ public class XDataUtil {
         return ON.equals(recallValue);
     }
 
-
     public static void sign(FloatingWindowService service) {
         Date now = new Date(System.currentTimeMillis());
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String date = format.format(now);
         XDataUtil.setXDataValue(service, XDataUtil.IS_SIGN, date);
         XToast.showToast(service, "今日已签到！");
+    }
+
+    public static boolean isSigned(Context context) {
+        String xDataValue = XDataUtil.getXDataValue(context, XDataUtil.IS_SIGN);
+        Date now = new Date(System.currentTimeMillis());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String date = format.format(now);
+        if (!TextUtils.isEmpty(xDataValue) && date.equals(xDataValue)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

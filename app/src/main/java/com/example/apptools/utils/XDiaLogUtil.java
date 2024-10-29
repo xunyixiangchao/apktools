@@ -293,9 +293,9 @@ public class XDiaLogUtil {
                     XDiaLogUtil.showGame(service, XDataUtil.GAME_DICE);
                     break;
                 case "跳转":
-//                    XDiaLogUtil.jumpUser(service);
-                    Request request = new Request.Builder().url("https://api-user.soulapp.cn/v3/update/user/info?pageId=HomePage_AvatarChoice").build();
-                    XOkHttpUtil.soulInterceptor(request, null);
+                    XDiaLogUtil.jumpUser(service);
+//                    Request request = new Request.Builder().url("https://api-user.soulapp.cn/v3/update/user/info?pageId=HomePage_AvatarChoice").build();
+//                    XOkHttpUtil.soulInterceptor(request, null);
                     break;
                 case "保存":
                     XDiaLogUtil.saveUser(service);
