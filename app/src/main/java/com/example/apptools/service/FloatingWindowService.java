@@ -76,16 +76,9 @@ public class FloatingWindowService extends Service implements EndCall {
         return null;
     }
 
-    //    String[] items = {"石头剪刀布", "骰子", String.format("防撤%s", XDataUtil.isRecall(this) ? "已开启" : "未开启"),
-//            "验证", "关闭", "跳转", "url"};
     private static Map<Integer, String> map = new HashMap<>();
 
     static {
-//        map.put(0,"获取Bubble");
-//        map.put(12,"发个Bubble");
-
-//        map.put(1, "剪刀石头布");
-//        map.put(2, "骰子");
         map.put(0, "**此增强不收取任何费用，仅作逆向学习用！群612381940**");
         map.put(1, "游戏");
         map.put(2, "本地撤回%s");
@@ -664,7 +657,7 @@ public class FloatingWindowService extends Service implements EndCall {
             }
             if (recyLayout != null) {
                 windowManager.removeView(recyLayout);
-                clearPost(runnable, autoBubbleRun);
+                clearPost(runnable, autoBubbleRun,signRun);
             }
         } catch (Exception e) {
             e.printStackTrace();
