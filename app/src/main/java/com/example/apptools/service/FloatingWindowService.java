@@ -66,7 +66,7 @@ public class FloatingWindowService extends Service implements EndCall {
     public Runnable autoBubbleRun;
     public Runnable signRun;
     public int scrollPosition = 0;
-    public int delayMillis = 500; // 每次滚动之间的延迟时间（以毫秒为单位）
+    public int delayMillis = 1000; // 每次滚动之间的延迟时间（以毫秒为单位）
     public int autoDelayTime = 1000 * 60 * 140;
     public int radomTime = 1000 * 60;
     public int signDelayTime = 1000 * 60 * 60 * 6;
@@ -102,10 +102,9 @@ public class FloatingWindowService extends Service implements EndCall {
     @Override
     public void onCreate() {
         super.onCreate();
+        //版本验证
+        new NetAsyncUtil(this, XDataUtil.typeMap.get(XDataUtil.NET_CONFIG)).execute(XDataUtil.CONFIG_URL);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-
-        // Inflate the floating view layout we created
-//        floatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
         // 创建LinearLayout
         floatingView = new LinearLayout(this);
         floatingView.setOrientation(LinearLayout.VERTICAL); // 设置LinearLayout的排列方向为垂直
@@ -118,7 +117,6 @@ public class FloatingWindowService extends Service implements EndCall {
         int circle = (int) (getResources().getDisplayMetrics().density * 100);
         shape.setCornerRadius(circle); // 设置圆角半径
         floatingView.setBackground(shape);
-//        floatingView.setBackgroundColor(0xFFBB86FC);
         // 创建TextView
         TextView textView = new TextView(this);
         textView.setText("玄"); // 设置TextView的内容
@@ -185,8 +183,31 @@ public class FloatingWindowService extends Service implements EndCall {
                 }
             }
         });
-        handler = new Handler();
+
         initRecyclerView();
+        //先初始化run,再执行delayPost
+        initRunnable();
+        if (XDataUtil.isChecked(this)) {
+            delayPost(signRun, delayMillis);
+        }
+        if (XDataUtil.isAutoBubble(this)) {
+            delayPost(autoBubbleRun, autoDelayTime + new Random().nextInt(radomTime));
+        }
+    }
+
+    private void initRunnable() {
+        handler = new Handler();
+        runnable = () -> {
+            if (recyclerView.getAdapter() != null) {
+                int itemCount = recyclerView.getAdapter().getItemCount();
+                if (scrollPosition < itemCount - 1) {
+                    scrollPosition += 1;
+                    recyclerView.smoothScrollToPosition(scrollPosition);
+                    // 继续运行此任务
+                    delayPost(runnable, delayMillis);
+                }
+            }
+        };
         signRun = () -> {
             if (!XDataUtil.isSigned(this)) {
                 //签到
@@ -195,19 +216,11 @@ public class FloatingWindowService extends Service implements EndCall {
             }
             delayPost(signRun, signDelayTime);
         };
-        if (XDataUtil.isChecked(this)) {
-            delayPost(signRun, delayMillis);
-        }
         autoBubbleRun = () -> {
             BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
             // 继续运行此任务
             delayPost(autoBubbleRun, autoDelayTime + new Random().nextInt(radomTime));
         };
-        if (XDataUtil.isAutoBubble(this)) {
-            delayPost(autoBubbleRun, autoDelayTime + new Random().nextInt(radomTime));
-        }
-
-        new NetAsyncUtil(this, XDataUtil.typeMap.get(XDataUtil.NET_CONFIG)).execute(XDataUtil.CONFIG_URL);
     }
 
     public void delayPost(Runnable run, long delay) {
@@ -255,18 +268,6 @@ public class FloatingWindowService extends Service implements EndCall {
         avatarAdapter = new AvatarAdapter(this, this);
         recyclerView.setAdapter(adapter);
         recyLayout.addView(recyclerView);
-
-        runnable = () -> {
-            if (recyclerView.getAdapter() != null) {
-                int itemCount = recyclerView.getAdapter().getItemCount();
-                if (scrollPosition < itemCount - 1) {
-                    scrollPosition += 1;
-                    recyclerView.smoothScrollToPosition(scrollPosition);
-                    // 继续运行此任务
-                    delayPost(runnable, 1000);
-                }
-            }
-        };
     }
 
     private void showCheckDialog() {
