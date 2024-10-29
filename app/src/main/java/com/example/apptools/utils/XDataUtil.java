@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class XDataUtil {
 
@@ -55,6 +56,8 @@ public class XDataUtil {
 
     public static Integer AUTO_SEND_BUBBLE = 16;
 
+    public static Integer IS_SIGN = 17;
+
 
     public static String CONFIG_URL = "http://67.218.158.220/curl/xconfig.txt";
     public static String CHECK_USER_URL = "http://67.218.158.220/curl/checkUser.txt";
@@ -75,7 +78,7 @@ public class XDataUtil {
         typeMap.put(NET_CONFIG, "NET_CONFIG");
         typeMap.put(SEND_BUBBLE, "SEND_BUBBLE");
         typeMap.put(AUTO_SEND_BUBBLE, "AUTO_SEND_BUBBLE");
-
+        typeMap.put(IS_SIGN, "IS_SIGN");
     }
 
     public static String getXDataValue(Context context, int type) {
@@ -315,6 +318,17 @@ public class XDataUtil {
         }
     }
 
+    public static boolean isSigned(Context context) {
+        String xDataValue = XDataUtil.getXDataValue(context, XDataUtil.IS_SIGN);
+        Date now = new Date(System.currentTimeMillis());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String date = format.format(now);
+        if (!TextUtils.isEmpty(xDataValue) && date.equals(xDataValue)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public static boolean isAutoBubble(Context context) {
         String recallValue = XDataUtil.getXDataValue(context, XDataUtil.AUTO_SEND_BUBBLE);
@@ -330,8 +344,16 @@ public class XDataUtil {
             context.clearPost(context.autoBubbleRun);
             XToast.showToast(context, "自动BUBBLE已关闭");
         } else {
-            context.delayPost(context.autoBubbleRun, context.autoDelayTime);
+            context.delayPost(context.autoBubbleRun, context.autoDelayTime + new Random().nextInt(context.radomTime));
             XToast.showToast(context, "自动BUBBLE已开启");
         }
+    }
+
+    public static void sign(FloatingWindowService service) {
+        Date now = new Date(System.currentTimeMillis());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String date = format.format(now);
+        XDataUtil.setXDataValue(service, XDataUtil.IS_SIGN, date);
+        XToast.showToast(service, "今日已签到！");
     }
 }

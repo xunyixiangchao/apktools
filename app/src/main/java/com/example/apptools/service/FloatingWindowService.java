@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import cn.soul.android.component.SoulRouter;
 
@@ -63,9 +64,12 @@ public class FloatingWindowService extends Service implements EndCall {
     public Handler handler;
     public Runnable runnable;
     public Runnable autoBubbleRun;
+    public Runnable signRun;
     public int scrollPosition = 0;
     public int delayMillis = 500; // 每次滚动之间的延迟时间（以毫秒为单位）
-    public int autoDelayTime = 1000 * 60 * 45;
+    public int autoDelayTime = 1000 * 60 * 140;
+    public int radomTime = 1000 * 60;
+    public int signDelayTime = 1000 * 60 * 60 * 6;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -82,7 +86,7 @@ public class FloatingWindowService extends Service implements EndCall {
 
 //        map.put(1, "剪刀石头布");
 //        map.put(2, "骰子");
-        map.put(0, "**此增强不收取任何费用，仅作逆向学习用！群673020836**");
+        map.put(0, "**此增强不收取任何费用，仅作逆向学习用！群612381940**");
         map.put(1, "游戏");
         map.put(2, "本地撤回%s");
         map.put(3, "防撤%s");
@@ -139,7 +143,6 @@ public class FloatingWindowService extends Service implements EndCall {
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = getResources().getDisplayMetrics().widthPixels - 200;
         params.y = getResources().getDisplayMetrics().heightPixels - 500;
-
         // Add the view to the window
         windowManager.addView(floatingView, params);
         // Make the view movable
@@ -184,20 +187,24 @@ public class FloatingWindowService extends Service implements EndCall {
         });
         handler = new Handler();
         initRecyclerView();
-        if (XDataUtil.isChecked(this)) {
-            //签到
-            XSoulUtil.sign(this);
-        }
-        autoBubbleRun = new Runnable() {
-            @Override
-            public void run() {
-                BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
-                // 继续运行此任务
-                delayPost(autoBubbleRun, autoDelayTime);
+        signRun = () -> {
+            if (!XDataUtil.isSigned(this)) {
+                //签到
+                XSoulUtil.sign(this);
+                XDataUtil.sign(this);
             }
+            delayPost(signRun, signDelayTime);
+        };
+        if (XDataUtil.isChecked(this)) {
+            delayPost(signRun, delayMillis);
+        }
+        autoBubbleRun = () -> {
+            BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
+            // 继续运行此任务
+            delayPost(autoBubbleRun, autoDelayTime + new Random().nextInt(radomTime));
         };
         if (XDataUtil.isAutoBubble(this)) {
-            delayPost(autoBubbleRun, autoDelayTime);
+            delayPost(autoBubbleRun, autoDelayTime + new Random().nextInt(radomTime));
         }
 
         new NetAsyncUtil(this, XDataUtil.typeMap.get(XDataUtil.NET_CONFIG)).execute(XDataUtil.CONFIG_URL);
@@ -249,17 +256,14 @@ public class FloatingWindowService extends Service implements EndCall {
         recyclerView.setAdapter(adapter);
         recyLayout.addView(recyclerView);
 
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (recyclerView.getAdapter() != null) {
-                    int itemCount = recyclerView.getAdapter().getItemCount();
-                    if (scrollPosition < itemCount - 1) {
-                        scrollPosition += 1;
-                        recyclerView.smoothScrollToPosition(scrollPosition);
-                        // 继续运行此任务
-                        delayPost(runnable, 1000);
-                    }
+        runnable = () -> {
+            if (recyclerView.getAdapter() != null) {
+                int itemCount = recyclerView.getAdapter().getItemCount();
+                if (scrollPosition < itemCount - 1) {
+                    scrollPosition += 1;
+                    recyclerView.smoothScrollToPosition(scrollPosition);
+                    // 继续运行此任务
+                    delayPost(runnable, 1000);
                 }
             }
         };
@@ -290,6 +294,8 @@ public class FloatingWindowService extends Service implements EndCall {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showListDialog() {
+        String s = "{\"commands_\":[{\"acceptedMsgId_\":\"\",\"clientType_\":0,\"cmdCase_\":12,\"cmdId_\":\"173016252922270501\",\"cmd_\":{\"bitField0_\":0,\"extMap_\":{\"a\":true,\"b\":\"MAP\",\"c\":{\"isBadge\":\"true\",\"ADMIN_PUSH\":\"1\",\"offlinePush\":\"true\",\"trackId\":\"{\\\"trackId\\\":\\\"17301625292219912\\\",\\\"msgId\\\":\\\"173016252922270501\\\",\\\"categoryId\\\":\\\"63e36863e5a446439042d5f93ec44d0d\\\",\\\"pushType\\\":\\\"SYSTEM\\\"}\",\"from\":\"0\",\"tag\":\"notices\",\"text\":\"🥬菜造反了戳破了我的泡泡\",\"type\":\"PRICK_BUBBLING_PUSH\",\"title\":\"🥬菜造反了戳破了我的泡泡\",\"notice\":\"{\\\"targetUserAvatarName\\\":\\\"avatar-1604452932723-02507\\\",\\\"readMark\\\":false,\\\"prefix\\\":\\\"🥬菜造反了\\\",\\\"extJson\\\":\\\"{\\\\\\\"enableAvatarJump\\\\\\\":true,\\\\\\\"hasImage\\\\\\\":false,\\\\\\\"replyToHasImage\\\\\\\":false}\\\",\\\"targetUserAvatarColor\\\":\\\"HeaderColor_Default\\\",\\\"title\\\":\\\"找聊天搭子:Soul助手\\\",\\\"type\\\":\\\"PRICK_BUBBLING_PUSH\\\",\\\"content\\\":\\\"🥬菜造反了戳破了我的泡泡\\\",\\\"receiverId\\\":401448036,\\\"tab\\\":\\\"interact\\\",\\\"noticeLocation\\\":2,\\\"id\\\":139951508,\\\"actorIdEcpt\\\":\\\"NFlhSlRPbGU4cS9WVlgvZUh1NEExdz09\\\",\\\"targetActivityId\\\":0,\\\"extJsonObj\\\":{\\\"enableAvatarJump\\\":true,\\\"replyToHasImage\\\":false,\\\"hasImage\\\":false},\\\"read\\\":false,\\\"targetId\\\":401448036,\\\"postContent\\\":\\\"找聊天搭子:Soul助手\\\",\\\"subTargetType\\\":\\\"BUBBLING_RECORD\\\",\\\"subTargetUserId\\\":-1,\\\"targetType\\\":\\\"USER\\\",\\\"targetUserId\\\":-1,\\\"subTargetId\\\":265417,\\\"actorId\\\":-1,\\\"createTime\\\":1730162529198}\"},\"e\":{}},\"memoizedIsInitialized\":-1,\"receiver_\":\"401448036\",\"sender_\":\"0\",\"text_\":\"🥬菜造反了戳破了我的泡泡\",\"title_\":\"🥬菜造反了戳破了我的泡泡\",\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0},\"crc_\":\"\",\"encryptedUserId_\":\"\",\"memoizedIsInitialized\":-1,\"soulId_\":\"0\",\"timestamp_\":0,\"type_\":7,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0},{\"acceptedMsgId_\":\"\",\"clientType_\":0,\"cmdCase_\":8,\"cmdId_\":\"\",\"cmd_\":{\"memoizedIsInitialized\":-1,\"readLastMsgId_\":\"1730162529222\",\"remain_\":false,\"timestamp_\":\"0\",\"type_\":0,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0},\"crc_\":\"\",\"encryptedUserId_\":\"\",\"memoizedIsInitialized\":-1,\"soulId_\":\"\",\"timestamp_\":0,\"type_\":3,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0}],\"memoizedIsInitialized\":1,\"unknownFields\":{\"a\":{}},\"memoizedSize\":-1,\"memoizedHashCode\":0}";
+        System.out.println(s);
         String[] items = new String[0];
         String checkData = XDataUtil.getXDataValue(this, XDataUtil.CHECK);
         List<String> itemList = new ArrayList<>();

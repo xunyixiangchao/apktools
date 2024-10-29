@@ -44,7 +44,7 @@ public class XDiaLogUtil {
     static {
         list.put("游戏", new String[]{"剪刀石头布", "骰子"});
         list.put("BUBBLE", new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE", "自动发送%s"});
-        list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到"});
+        list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到", "跳转页面"});
         list.put("头像", new String[]{"获取头像", "设置头像"});
     }
 
@@ -344,6 +344,9 @@ public class XDiaLogUtil {
                     XSoulUtil.sign(service);
                 case "连接":
                     Socket soulSocket = XSocket.getSoulSocket("114.55.211.197", 8180);
+                    break;
+                case "跳转页面":
+                    SoulRouter.i().e("chat/imInsight").d();
                     break;
                 default:
                     if (items[which].contains("自动发送")) {
