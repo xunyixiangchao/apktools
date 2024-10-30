@@ -66,6 +66,7 @@ public class XDataUtil {
 
     public static Integer URL_FILTER=19;
 
+    public static Integer SIGN_TIME=20;
 
     public static String CONFIG_URL = "http://67.218.158.220/curl/xconfig.txt";
     public static String CHECK_USER_URL = "http://67.218.158.220/curl/checkUser.txt";

@@ -22,7 +22,7 @@ public class SoulUserInfoService implements SoulService {
             userData = userResponse.getData();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e("XOkHttpUtil", e.toString());
+            Log.e(TAG + "UserInfoService", e.toString());
         }
     }
 }

@@ -16,7 +16,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class SoulAvatarService implements SoulService {
-    public static String TAG = SoulAvatarService.class.getSimpleName();
+    public static String ATAG = SoulAvatarService.class.getSimpleName();
 
     @Override
     public void interceptor(Request request, Response response, Map<String, String> queryParams) {
@@ -25,11 +25,10 @@ public class SoulAvatarService implements SoulService {
             List<AvatarsItem> list = new ArrayList<>();
             list.addAll(avatarResponse.getData().getFemaleAvatars());
             list.addAll(avatarResponse.getData().getMaleAvatars());
-            LogToFile.writeTag(TAG, GsonUtil.build().toJson(list));
-//            LogToFile.writeUrl(TAG, request.url().url(), response.body().string());
+            LogToFile.writeTag(ATAG, GsonUtil.build().toJson(list));
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("XOkHttpUtil", e.toString());
+            Log.e(TAG + ATAG, e.toString());
         }
     }
 }

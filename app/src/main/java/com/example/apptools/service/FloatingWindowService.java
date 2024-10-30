@@ -43,6 +43,7 @@ import com.example.apptools.utils.soul.util.XSoulUtil;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +68,7 @@ public class FloatingWindowService extends Service implements EndCall {
     public Runnable signRun;
     public int scrollPosition = 0;
     public int delayMillis = 1000; // 每次滚动之间的延迟时间（以毫秒为单位）
-    public int autoDelayTime = 1000 * 60 * 140;
+    public int autoDelayTime = 1000 * 60 * 60;
     public int radomTime = 1000 * 60;
     public int signDelayTime = 1000 * 60 * 60 * 6;
 
@@ -92,6 +93,7 @@ public class FloatingWindowService extends Service implements EndCall {
         map.put(10, "工具");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate() {
@@ -185,7 +187,24 @@ public class FloatingWindowService extends Service implements EndCall {
             delayPost(signRun, delayMillis);
         }
         if (XDataUtil.isAutoBubble(this)) {
-            delayPost(autoBubbleRun, autoDelayTime + new Random().nextInt(radomTime));
+            // 获取当前时间
+            LocalTime currentTime = LocalTime.now();
+
+            // 设定比较时间为9点
+            LocalTime nineAM = LocalTime.of(9, 0);
+            //大于9点
+            if (currentTime.isAfter(nineAM)) {
+                int signTime = XDataUtil.getXDataIntValue(this, XDataUtil.SIGN_TIME);
+                int time;
+                if (System.currentTimeMillis() - ((long) signTime * 1000) > autoDelayTime) {
+                    time = delayMillis;
+                } else {
+                    time = autoDelayTime + new Random().nextInt(radomTime);
+                }
+                delayPost(autoBubbleRun, time);
+            } else {
+                delayPost(autoBubbleRun, autoDelayTime + new Random().nextInt(radomTime));
+            }
         }
     }
 
@@ -212,6 +231,7 @@ public class FloatingWindowService extends Service implements EndCall {
         };
         autoBubbleRun = () -> {
             BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
+            XDataUtil.setXDataValue(this, XDataUtil.SIGN_TIME, String.valueOf(System.currentTimeMillis() / 1000));
             // 继续运行此任务
             delayPost(autoBubbleRun, autoDelayTime + new Random().nextInt(radomTime));
         };

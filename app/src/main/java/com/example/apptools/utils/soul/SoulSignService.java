@@ -18,9 +18,12 @@ public class SoulSignService implements SoulService {
     public void interceptor(Request request, Response response, Map<String, String> queryParams) {
         try {
             SignResponse signResponse = GsonUtil.build().fromJson(response.body().string(), SignResponse.class);
-            XToast.showToast(MartianApp.b(), signResponse.getData().getMsg());
+            Log.i(TAG + "SoulSignService", GsonUtil.build().toJson(signResponse));
+            if (signResponse != null && signResponse.getData() != null) {
+                XToast.showToast(MartianApp.b(), signResponse.getData().getMsg());
+            }
         } catch (IOException e) {
-            Log.e("XOkHttpUtil", e.toString());
+            Log.e(TAG + "SoulSignService", e.toString());
         }
     }
 }
