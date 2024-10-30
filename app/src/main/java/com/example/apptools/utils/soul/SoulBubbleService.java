@@ -32,7 +32,7 @@ public class SoulBubbleService implements SoulService {
             LogToFile.writeBubble(GsonUtil.build().toJson(bubbleResponse.getData().getBubblingList()));
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e(TAG+"SoulBubbleService", e.toString());
+            Log.e(TAG+"BubbleService", e.toString());
         }
     }
 }

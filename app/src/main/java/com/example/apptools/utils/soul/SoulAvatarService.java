@@ -28,7 +28,7 @@ public class SoulAvatarService implements SoulService {
             LogToFile.writeTag(ATAG, GsonUtil.build().toJson(list));
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e(TAG + ATAG, e.toString());
+            Log.e(TAG + "AvatarService", e.toString());
         }
     }
 }

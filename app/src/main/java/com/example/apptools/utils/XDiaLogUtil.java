@@ -306,7 +306,7 @@ public class XDiaLogUtil {
                     XSoulUtil.getRegisterAvatars(service);
                     break;
                 case "设置头像":
-                    service.list = LogToFile.readTag(SoulAvatarService.TAG, null);
+                    service.list = LogToFile.readTag(SoulAvatarService.ATAG, null);
                     if (service.list.size() > 0) {
                         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                                 WindowManager.LayoutParams.WRAP_CONTENT,
