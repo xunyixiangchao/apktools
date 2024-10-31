@@ -63,7 +63,7 @@ public class NetAsyncUtil extends AsyncTask<String, Void, String> {
         // 在这里处理读取到的配置文件数据
         Log.d(TAG, "Remote config file content: " + result);
         XDataUtil.setXDataValue(mContext, type, result);
-        if (Objects.equals(XDataUtil.typeMap.get(XDataUtil.NET_CONFIG), type)) {
+        if (type.equals(XDataUtil.typeMap.get(XDataUtil.NET_CONFIG))) {
             XDataUtil.checkConfig(mContext);
         }
     }
