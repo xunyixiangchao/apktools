@@ -198,6 +198,7 @@ public class FloatingWindowService extends Service implements EndCall {
                 int time;
                 if (System.currentTimeMillis() - ((long) signTime * 1000) > autoDelayTime) {
                     time = delayMillis;
+                    XDataUtil.setXDataValue(this, XDataUtil.SIGN_TIME, String.valueOf(System.currentTimeMillis() / 1000));
                 } else {
                     time = autoDelayTime + new Random().nextInt(radomTime);
                 }
