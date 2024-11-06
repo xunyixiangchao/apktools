@@ -45,6 +45,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,6 @@ public class FloatingWindowService extends Service implements EndCall {
         map.put(10, "工具");
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate() {
@@ -187,13 +187,10 @@ public class FloatingWindowService extends Service implements EndCall {
             delayPost(signRun, delayMillis);
         }
         if (XDataUtil.isAutoBubble(this)) {
-            // 获取当前时间
-            LocalTime currentTime = LocalTime.now();
-
-            // 设定比较时间为9点
-            LocalTime nineAM = LocalTime.of(9, 0);
+            Calendar calendar = Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
             //大于9点
-            if (currentTime.isAfter(nineAM)) {
+            if (hour >= 9) {
                 int signTime = XDataUtil.getXDataIntValue(this, XDataUtil.SIGN_TIME);
                 int time;
                 if (System.currentTimeMillis() - ((long) signTime * 1000) > autoDelayTime) {
@@ -231,8 +228,12 @@ public class FloatingWindowService extends Service implements EndCall {
             delayPost(signRun, signDelayTime);
         };
         autoBubbleRun = () -> {
-            BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
-            XDataUtil.setXDataValue(this, XDataUtil.SIGN_TIME, String.valueOf(System.currentTimeMillis() / 1000));
+            Calendar calendar = Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            if (hour >= 9) {
+                BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
+                XDataUtil.setXDataValue(this, XDataUtil.SIGN_TIME, String.valueOf(System.currentTimeMillis() / 1000));
+            }
             // 继续运行此任务
             delayPost(autoBubbleRun, autoDelayTime + new Random().nextInt(radomTime));
         };
