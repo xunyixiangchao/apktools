@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import cn.soul.android.component.SoulRouter;
+import cn.soulapp.android.component.planet.soulmatch.robot.bean.SoulMatchParams;
+import hi.g;
 import okhttp3.Request;
 
 import com.example.apptools.service.FloatingWindowService;
@@ -45,9 +47,9 @@ public class XDiaLogUtil {
     static {
         list.put("游戏", new String[]{"剪刀石头布", "骰子"});
         list.put("BUBBLE", new String[]{"BUBBLE列表", "获取BUBBLE列表", "发送BUBBLE", "自动发送%s"});
-        list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到", "跳转页面"});
+        list.put("其他", new String[]{"跳转", "保存", "验证", "关闭", "签到","匹配"});
         list.put("头像", new String[]{"获取头像", "设置头像"});
-        list.put("工具", new String[]{"网络请求%s", "URL筛选"});
+        list.put("工具", new String[]{"网络请求%s", "URL筛选", "跳转页面"});
     }
 
     public static void showGame(Context context, Integer type) {
@@ -353,6 +355,9 @@ public class XDiaLogUtil {
                     break;
                 case "跳转页面":
                     SoulRouter.i().e("chat/imInsight").d();
+                    break;
+                case "匹配":
+                    XSoulUtil.startMatch(service);
                     break;
                 case "URL筛选":
                     XDiaLogUtil.filter(service);

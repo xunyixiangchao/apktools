@@ -43,7 +43,6 @@ import com.example.apptools.utils.soul.util.XSoulUtil;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -195,7 +194,6 @@ public class FloatingWindowService extends Service implements EndCall {
                 int time;
                 if (System.currentTimeMillis() - ((long) signTime * 1000) > autoDelayTime) {
                     time = delayMillis;
-                    XDataUtil.setXDataValue(this, XDataUtil.SIGN_TIME, String.valueOf(System.currentTimeMillis() / 1000));
                 } else {
                     time = autoDelayTime + new Random().nextInt(radomTime);
                 }
@@ -230,7 +228,8 @@ public class FloatingWindowService extends Service implements EndCall {
         autoBubbleRun = () -> {
             Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            if (hour >= 9) {
+            int signTime = XDataUtil.getXDataIntValue(this, XDataUtil.SIGN_TIME);
+            if (hour >= 9 && (System.currentTimeMillis() - ((long) signTime * 1000) > autoDelayTime)) {
                 BubbleUtil.sendBubble(FloatingWindowService.this, XDataUtil.getXDataValue(FloatingWindowService.this, XDataUtil.SEND_BUBBLE));
                 XDataUtil.setXDataValue(this, XDataUtil.SIGN_TIME, String.valueOf(System.currentTimeMillis() / 1000));
             }
